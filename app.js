@@ -13,3 +13,12 @@ function refreshSongPrice() {
 refreshSongPrice();
 setInterval(refreshSongPrice, 60000);
 document.addEventListener('visibilitychange', refreshSongPrice);
+
+// Only promote live ordering once the server has all activation dependencies.
+fetch('/api/config', {cache:'no-store',signal:AbortSignal.timeout(8000)}).then(r=>r.ok?r.json():null).then(config=>{
+ if(!config?.enabled)return;
+ const action=document.getElementById('start-order');
+ action.href='bestellen.html';action.textContent='Stel uw lied samen →';
+ document.querySelector('.availability').textContent=config.test?'Testbestelling beschikbaar':'Uw persoonlijke lied bestellen';
+ document.querySelector('.coming p').textContent='Vul de vragenlijst in en reken veilig af via Mollie.';
+}).catch(()=>{});

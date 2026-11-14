@@ -1,0 +1,1 @@
+document.querySelectorAll('.wave').forEach(wave=>{for(let i=0;i<75;i++){const bar=document.createElement('i');const envelope=Math.exp(-Math.pow((i-37)/23,2));bar.style.height=(7+envelope*(20+74*Math.abs(Math.sin(i*1.71)))*Math.abs(Math.cos(i*.24)))+'%';wave.append(bar)}});

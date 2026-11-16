@@ -1,0 +1,1 @@
+{"profile":"marketing","sourceRoots":["."],"locale":"nl-NL","requiredCommands":["check","test"],"commands":{"check":"npm run check","test":"npm test"}}

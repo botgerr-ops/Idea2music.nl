@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="560" viewBox="0 0 640 560">
+<defs><pattern id="groove" width="7" height="7" patternUnits="userSpaceOnUse"><path d="M0 0h7" stroke="#633345" stroke-width="1"/></pattern></defs>
+<ellipse cx="340" cy="500" rx="210" ry="20" fill="#5b162b" opacity=".09"/>
+<circle cx="333" cy="268" r="230" fill="#f4bec4"/>
+<g transform="translate(20 -15) rotate(12 380 230)">
+<circle cx="392" cy="222" r="174" fill="#351822"/>
+<g fill="none" stroke="#6d3c4a" stroke-width="1.1">
+<circle cx="392" cy="222" r="164"/><circle cx="392" cy="222" r="155"/><circle cx="392" cy="222" r="146"/><circle cx="392" cy="222" r="137"/><circle cx="392" cy="222" r="128"/><circle cx="392" cy="222" r="119"/><circle cx="392" cy="222" r="110"/><circle cx="392" cy="222" r="101"/><circle cx="392" cy="222" r="92"/><circle cx="392" cy="222" r="83"/>
+</g><circle cx="392" cy="222" r="66" fill="#ffc95c"/><text x="392" y="211" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="19" fill="#5b162b">SPECIAAL</text><text x="392" y="248" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="32" fill="#5b162b">voor jou.</text><circle cx="392" cy="222" r="6" fill="#351822"/>
+</g>
+<g transform="rotate(-7 275 300)">
+<path d="M91 197 278 88 461 197v242H91Z" fill="#b92e43"/>
+<rect x="124" y="122" width="305" height="290" rx="10" fill="#fff5e6"/>
+<path d="M149 145h252" stroke="#dcbcae"/>
+<text x="152" y="177" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#5b162b">EEN LIED DAT ALLEEN</text>
+<text x="152" y="198" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#5b162b">JIJ KUNT GEVEN.</text>
+<text x="152" y="251" font-family="Georgia,serif" font-size="36" font-style="italic" fill="#5b162b">Jullie verhaal.</text>
+<text x="152" y="295" font-family="Georgia,serif" font-size="36" font-style="italic" fill="#5b162b">Op muziek.</text>
+<path d="M91 213 276 327 461 213v235a10 10 0 0 1-10 10H101a10 10 0 0 1-10-10Z" fill="#e9544b"/>
+<path d="m91 448 185-121 185 121" fill="none" stroke="#f77a65" stroke-width="2"/>
+<circle cx="276" cy="329" r="30" fill="#ffc95c"/><path d="M266 315v25q-18-3-14 8q9 9 19-1v-22l21-5v13q-18-3-14 8q10 10 19-1v-29Z" fill="#5b162b"/>
+<text x="121" y="425" font-family="Arial,sans-serif" font-weight="700" font-size="14" letter-spacing="1" fill="#fff5e6">IDEA2MUSIC</text>
+</g>
+<g transform="translate(478 378) rotate(11)"><circle r="64" fill="#ffc95c"/><text y="-11" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="16" fill="#5b162b">KLEIN CADEAU.</text><text y="14" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="16" fill="#5b162b">GROOT GEVOEL.</text><path d="M-17 29q17 14 34 0" stroke="#5b162b" stroke-width="2" fill="none"/></g>
+</svg>

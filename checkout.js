@@ -35,6 +35,7 @@ form.addEventListener('submit',async event=>{
   if(!response.ok){if(data.errors)showErrors(data.errors);if(response.status===409)document.getElementById('new-attempt').hidden=false;throw Error(data.message||'Betalen is nu niet mogelijk. Probeer opnieuw.');}
   const statusUrl=`/bestelling.html#${identity.orderId}:${identity.token}`;
   try{sessionStorage.setItem('idea2music-order',JSON.stringify(identity));}catch{/* The fragment in the Mollie return URL also carries access. */}
+  if(!data.paid&&data.checkoutUrl)window.I2MTracking?.trackInitiateCheckout(config.amountCents);
   navigating=true;window.location.assign(data.paid?statusUrl:data.checkoutUrl);
  }catch(error){feedback.textContent=error.name==='TimeoutError'?'De reactie duurt te lang. Probeer opnieuw: dezelfde betaalpoging wordt hervat.':error.message;busy=false;pay.disabled=!config.enabled;pay.removeAttribute('aria-busy');displayPrice();}
 });

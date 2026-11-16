@@ -150,7 +150,7 @@ export async function onRequest({request,env,params}) {
    await limited(request,env,'status',45);
    let row=await authorize(request,env,new URL(request.url).searchParams.get('id'),access(request));
    if(row.payment_id) row=await syncPayment(env,row,await mollie(env,`payments/${row.payment_id}`));
-   return json({orderId:row.id,status:row.payment_status,amountCents:row.amount_cents,cancellationRequested:!!row.cancellation_requested_at});
+   return json({orderId:row.id,status:row.payment_status,amountCents:row.amount_cents,testMode:env.MOLLIE_API_KEY.startsWith('test_'),cancellationRequested:!!row.cancellation_requested_at});
   }
   if(path==='webhook'&&request.method==='POST') {
    const text=await request.text();if(text.length>300)throw fail(400,'Ongeldig bericht.');

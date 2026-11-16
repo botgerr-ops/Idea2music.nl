@@ -3,3 +3,21 @@
   Referrer-Policy: no-referrer
   X-Frame-Options: DENY
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+/bestellen.html
+  X-Robots-Tag: noindex
+
+/bestellen
+  X-Robots-Tag: noindex
+
+/bestelling.html
+  X-Robots-Tag: noindex
+
+/bestelling
+  X-Robots-Tag: noindex
+
+/annuleren.html
+  X-Robots-Tag: noindex
+
+/annuleren
+  X-Robots-Tag: noindex

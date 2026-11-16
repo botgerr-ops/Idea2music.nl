@@ -27,6 +27,11 @@ footer{max-width:1440px;margin:auto;padding:46px 6% 25px}.footer-top{display:fle
 
 .icon{flex-shrink:0;vertical-align:middle}.promise-strip>.icon{color:var(--berry)}
 
+/* Discrete links to helpful occasion pages, matching the existing warm palette. */
+.occasion-links{display:flex;justify-content:center;flex-wrap:wrap;gap:11px 17px;margin:31px auto 0;max-width:960px}
+.occasion-links a{padding:8px 13px;border:1px solid var(--line);border-radius:30px;color:var(--berry);background:var(--white);font-size:12px;font-weight:600;line-height:1.5}
+.occasion-links a:hover,.occasion-links a:focus-visible{background:var(--pink)}
+
 /* Use the approved slogan lockup everywhere. The mark is a CSS crop of that exact image. */
 .brand-mark{display:block;position:relative;width:148px;height:83px;flex:0 0 148px;overflow:hidden}
 .brand-mark img{position:absolute;display:block;width:160px;height:auto;max-width:none;left:-6px;top:-22px;transform:none;clip-path:inset(0 0 28% 0)}

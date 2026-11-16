@@ -1,0 +1,11 @@
+.i2m-cookie-panel{position:fixed;z-index:1000;bottom:16px;left:16px;max-width:min(480px,calc(100vw - 32px));padding:22px 24px;background:#fff5e6;border:2px solid #5b162f;border-radius:20px;box-shadow:0 12px 45px #24121b38;color:#5b162f;font-family:inherit;max-height:calc(100vh - 32px);overflow:auto}
+.i2m-cookie-panel h2{margin:0 0 10px;font-size:22px;line-height:1.25;letter-spacing:-.6px}
+.i2m-cookie-panel p{margin:0 0 18px;font-size:14px;line-height:1.6}
+.i2m-cookie-privacy{display:inline-block;margin:0 0 14px;color:#5b162f;font-size:13px;text-decoration:underline;font-weight:700}
+.i2m-cookie-actions{display:flex;flex-wrap:wrap;gap:10px}
+.i2m-cookie-button{min-height:46px;flex:1 1 180px;border:2px solid #5b162f;border-radius:999px;cursor:pointer;padding:10px 15px;font:inherit;font-size:14px;font-weight:700}
+.i2m-cookie-refuse{background:#5b162f;color:#fff}
+.i2m-cookie-accept{background:#fff5e6;color:#5b162f}
+.i2m-cookie-button:focus-visible,.i2m-cookie-settings:focus-visible{outline:3px solid #e95b4f;outline-offset:3px}
+.i2m-cookie-settings{padding:0;border:0;background:transparent;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+@media(max-width:600px){.i2m-cookie-panel{left:10px;bottom:10px;max-width:calc(100vw - 20px);padding:18px}.i2m-cookie-panel h2{font-size:19px}}

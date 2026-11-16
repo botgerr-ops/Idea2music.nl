@@ -8,6 +8,27 @@ const validToken = value => typeof value==='string' && /^[0-9a-f]{64}$/.test(val
 function configured(env) {
  return env.CHECKOUT_ENABLED === 'true' && !!env.ORDERS_DB && /^(test|live)_[A-Za-z0-9]+$/.test(env.MOLLIE_API_KEY || '') && !!env.RESEND_API_KEY && !!env.MAIL_FROM && /^https:\/\//.test(env.PUBLIC_SITE_URL || '');
 }
+async function readiness(env) {
+ const checks={
+  database:false,
+  mollie:/^(test|live)_[A-Za-z0-9]+$/.test(env.MOLLIE_API_KEY || ''),
+  email:!!env.RESEND_API_KEY,
+  sender:!!env.MAIL_FROM,
+  site:/^https:\/\//.test(env.PUBLIC_SITE_URL || ''),
+  switch:env.CHECKOUT_ENABLED==='true'
+ };
+ if(env.ORDERS_DB) {
+  try {
+   await Promise.all([
+    env.ORDERS_DB.prepare('SELECT id,token_hash,payload_hash,payload_json,amount_cents,created_at,payment_id,checkout_url,payment_status,paid_at,cancellation_requested_at,consent_version FROM orders LIMIT 0').all(),
+    env.ORDERS_DB.prepare('SELECT id,order_id,body_json,state,claimed_at,sent_at,provider_id FROM mail_outbox LIMIT 0').all(),
+    env.ORDERS_DB.prepare('SELECT id,count,expires_at FROM rate_limits LIMIT 0').all()
+   ]);
+   checks.database=true;
+  } catch { /* Only return readiness flags, never SQL or credentials. */ }
+ }
+ return checks;
+}
 function site(env) { return new URL(env.PUBLIC_SITE_URL).origin; }
 async function limited(request,env,kind,max) {
  const minute=Math.floor(Date.now()/60000), ip=request.headers.get('CF-Connecting-IP') || 'local';
@@ -120,7 +141,7 @@ async function cancel(request,env) {
 export async function onRequest({request,env,params}) {
  try {
   const path=Array.isArray(params.path)?params.path.join('/'):params.path;
-  if(path==='config'&&request.method==='GET') return json({enabled:configured(env),test:env.MOLLIE_API_KEY?.startsWith('test_') || false,amountCents:priceAt()});
+  if(path==='config'&&request.method==='GET') { const checks=await readiness(env); return json({enabled:Object.values(checks).every(Boolean),test:env.MOLLIE_API_KEY?.startsWith('test_') || false,amountCents:priceAt(),checks}); }
   if(!configured(env)) throw fail(503,'Online bestellen is nog niet beschikbaar. Neem contact op via info@narrowvision.eu.');
   if(request.method==='POST'&&path!=='webhook'&&request.headers.get('Origin')!==site(env)) throw fail(403,'Open het formulier via de website.');
   if(path==='checkout'&&request.method==='POST') return await checkout(request,env);

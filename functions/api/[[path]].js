@@ -22,7 +22,8 @@ async function readiness(env) {
    await Promise.all([
     env.ORDERS_DB.prepare('SELECT id,token_hash,payload_hash,payload_json,amount_cents,created_at,payment_id,checkout_url,payment_status,paid_at,cancellation_requested_at,consent_version FROM orders LIMIT 0').all(),
     env.ORDERS_DB.prepare('SELECT id,order_id,body_json,state,claimed_at,sent_at,provider_id FROM mail_outbox LIMIT 0').all(),
-    env.ORDERS_DB.prepare('SELECT id,count,expires_at FROM rate_limits LIMIT 0').all()
+    env.ORDERS_DB.prepare('SELECT id,count,expires_at FROM rate_limits LIMIT 0').all(),
+    env.ORDERS_DB.prepare('SELECT number,order_id FROM order_numbers LIMIT 0').all()
    ]);
    checks.database=true;
   } catch { /* Only return readiness flags, never SQL or credentials. */ }
@@ -30,6 +31,20 @@ async function readiness(env) {
  return checks;
 }
 function site(env) { return new URL(env.PUBLIC_SITE_URL).origin; }
+// A stable, sequential customer reference; internal UUIDs stay in payment metadata and access tokens.
+async function orderReference(env,id) {
+ await env.ORDERS_DB.prepare('INSERT OR IGNORE INTO order_numbers(order_id) VALUES(?)').bind(id).run();
+ const assigned=await env.ORDERS_DB.prepare('SELECT number FROM order_numbers WHERE order_id=?').bind(id).first();
+ if(!Number.isSafeInteger(assigned?.number)||assigned.number<1) throw fail(503,'Het bestelnummer is tijdelijk niet beschikbaar.');
+ return 'I2M-'+String(assigned.number).padStart(6,'0');
+}
+function escapeHtml(value) {
+ return String(value).replace(/[&<>"']/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+}
+function brandedEmail(title,reference,sections) {
+ const blocks=sections.map(([heading,body])=>`<section style="border-top:1px solid #ecdccc;padding:18px 0"><h2 style="margin:0 0 8px;font-size:15px;color:#59152d">${escapeHtml(heading)}</h2><div style="white-space:pre-wrap;font-size:14px;line-height:1.6;color:#463341">${escapeHtml(body)}</div></section>`).join('');
+ return `<!doctype html><html lang="nl"><head><meta charset="utf-8"></head><body style="margin:0;padding:24px;background:#fff6ea;font-family:Arial,Helvetica,sans-serif;color:#59152d"><div style="max-width:640px;margin:auto;background:#fff;border:1px solid #ead9cf;border-radius:16px;overflow:hidden"><div style="background:#59152d;color:#fff;padding:24px"><div style="font-size:23px;font-weight:bold">Idea<span style="color:#ff6047">2</span>Music</div><h1 style="margin:14px 0 0;font-size:22px;color:#fff">${escapeHtml(title)}</h1><p style="margin:8px 0 0;color:#fbe3d6">Bestelnummer: ${escapeHtml(reference)}</p></div><div style="padding:8px 24px 24px">${blocks}<p style="font-size:12px;color:#756872;margin:8px 0">Jij het idee. Wij de muziek.</p></div></div></body></html>`;
+}
 async function limited(request,env,kind,max) {
  const minute=Math.floor(Date.now()/60000), ip=request.headers.get('CF-Connecting-IP') || 'local';
  const id=await sha(`${kind}:${ip}:${minute}`);
@@ -56,8 +71,9 @@ async function authorize(request,env,id,token) {
  return row;
 }
 function access(request) { return (request.headers.get('Authorization')||'').replace(/^Bearer /,''); }
-async function enqueue(env,row,kind,to,subject,text) {
+async function enqueue(env,row,kind,to,subject,text,html) {
  const body={from:env.MAIL_FROM,to:[to],reply_to:'info@narrowvision.eu',subject,text};
+ if(html) body.html=html;
  await env.ORDERS_DB.prepare('INSERT OR IGNORE INTO mail_outbox(id,order_id,body_json) VALUES(?,?,?)').bind(`${row.id}-${kind}`,row.id,JSON.stringify(body)).run();
 }
 async function flush(env,orderId) {
@@ -80,12 +96,21 @@ async function flush(env,orderId) {
 }
 async function notifyPaid(env,row) {
  const data=JSON.parse(row.payload_json), amount=euro(row.amount_cents), test=env.MOLLIE_API_KEY.startsWith('test_');
- const ref=`I2M-${row.id}`;
+ const ref=await orderReference(env,row.id);
  const summary=Object.entries(fields).map(([key,spec])=>`${spec.label}: ${data[key] || 'Niet opgegeven'}`).join('\n\n');
  const company='Idea2Music, handelsnaam van NarrowVision\nRhijnauwensingel 482, 3077 VM Rotterdam\nKVK 42203449 · Btw-id NL005580746B56\ninfo@narrowvision.eu';
  const terms='Uw bestelling betreft één persoonlijk, met AI gemaakt lied met songtekst, digitaal geleverd per e-mail. '+DELIVERY+' U kunt vóór levering kosteloos annulering aanvragen via de website of info@narrowvision.eu. Uw wettelijke bedenktijd bedraagt 14 dagen; voor digitale inhoud kan deze met uw instemming vervallen bij starten van downloaden of afspelen. Uw rechten bij een gebrekkig product blijven bestaan. Neem bij onjuiste uitspraak of een ander probleem contact op; wij zoeken een passende oplossing.';
- await enqueue(env,row,'merchant-paid','info@narrowvision.eu',`${test?'[TEST] ':''}Betaalde opdracht ${ref}`,`Bedrag: ${amount} inclusief btw\nMollie: ${row.payment_id}\n${row.cancellation_requested_at?'LET OP: annulering aangevraagd; niet produceren.\n':''}\n${summary}\n\nToestemming (${row.consent_version}): ${CONSENT}`);
- await enqueue(env,row,'customer-paid',data.email,`${test?'[TEST] ':''}Uw bestelling bij Idea2Music — ${ref}`,`Beste ${data.name},\n\n${test?'Dit is een testbestelling. Er is geen echte betaling uitgevoerd.\n\n':''}Wij hebben uw betaling van ${amount} inclusief btw ontvangen.\nBestelnummer: ${ref}\n\n${DELIVERY}\n\nUw ingevulde gegevens:\n${summary}\n\nBestelafspraken:\n${terms}\n\nU heeft vooraf ingestemd met:\n${CONSENT}\nToestemmingsversie: ${row.consent_version}\n\nAnnuleren: ga naar ${site(env)}/annuleren.html en vul het bestelnummer en het e-mailadres van uw bestelling in. U kunt ook antwoorden op deze e-mail. U ontvangt een bevestiging van uw verzoek. Een eventuele terugbetaling wordt afzonderlijk verwerkt.\n\n${company}`);
+ const merchantSummary=`BESTELNUMMER: ${ref}\nBEDRAG: ${amount} (incl. btw)\nBETAALSTATUS: Betaald${row.cancellation_requested_at?'\nLET OP: annulering aangevraagd; niet produceren.':''}\nKlant: ${data.name}\nE-mail: ${data.email}\nVoor: ${data.recipient}\nGelegenheid: ${data.occasion}\nStijl: ${data.style}\nSfeer: ${data.mood}`;
+ const merchantPayment=`Mollie-betaling: ${row.payment_id}\nInterne order-ID: ${row.id}\nBetaald op: ${row.paid_at || 'Datum onbekend'}\nToestemmingsversie: ${row.consent_version}`;
+ await enqueue(env,row,'merchant-paid','info@narrowvision.eu',`${test?'[TEST] ':''}Nieuwe betaalde opdracht ${ref} · ${amount}`,
+  `NIEUWE BETAALDE OPDRACHT\n\n${merchantSummary}\n\n--- VOLLEDIGE VRAGENLIJST ---\n${summary}\n\n--- BETALING & ADMINISTRATIE ---\n${merchantPayment}\n\nToestemming: ${CONSENT}`,
+  brandedEmail('Nieuwe betaalde opdracht',ref,[['In één oogopslag',merchantSummary],['Vragenlijst klant',summary],['Betaling en toestemming',merchantPayment+'\n\n'+CONSENT]]));
+ const customerIntro=`Beste ${data.name},\n\nBedankt voor je bestelling! We hebben je betaling van ${amount} ontvangen. Je hoeft niets meer te betalen.\nBestelnummer: ${ref}`;
+ const customerNext=`Wat gebeurt er nu?\n1. We lezen jouw verhaal en maken er een persoonlijk lied met songtekst van.\n2. ${DELIVERY}\n3. Je ontvangt bericht zodra het lied klaarstaat.\n\nHeb je een vraag? Antwoord op deze e-mail en vermeld ${ref}.`;
+ const cancellation=`Annuleren vóór levering kan via ${site(env)}/annuleren.html met ${ref} en het e-mailadres van de bestelling. Je kunt ook antwoorden op deze e-mail. We bevestigen je verzoek; een eventuele terugbetaling wordt apart verwerkt.`;
+ await enqueue(env,row,'customer-paid',data.email,`${test?'[TEST] ':''}Betaling ontvangen · ${ref} · Idea2Music`,
+  `${test?'TESTBESTELLING — er is geen echte betaling gedaan.\n\n':''}${customerIntro}\n\n${customerNext}\n\n--- JOUW INGEVULDE GEGEVENS ---\n${summary}\n\n--- BESTELAFSPRAKEN ---\n${terms}\n\nToestemming: ${CONSENT}\nVersie: ${row.consent_version}\n\n${cancellation}\n\n${company}`,
+  brandedEmail('Bedankt voor je bestelling!',ref,[['Bevestiging',`${test?'Dit is een testbestelling.\n':''}${customerIntro}`],['Dit kun je verwachten',customerNext],['Jouw ingevulde gegevens',summary],['Bestelafspraken en annuleren',terms+'\n\n'+cancellation+'\n\n'+CONSENT+'\nVersie: '+row.consent_version],['Bedrijfsgegevens',company]]));
  await flush(env,row.id);
 }
 async function syncPayment(env,row,payment) {
@@ -116,7 +141,7 @@ async function checkout(request,env) {
  if(row.payment_status==='paid') return json({paid:true,orderId:row.id});
  if(Date.now()-Date.parse(row.created_at)>30*60000) throw fail(409,'Deze betaalpoging is verlopen. Start een nieuwe bestelling.');
  if(!row.payment_id) {
-  const payment=await mollie(env,'payments',{method:'POST',headers:{'Idempotency-Key':row.id},body:JSON.stringify({amount:{currency:'EUR',value:(row.amount_cents/100).toFixed(2)},description:`Idea2Music I2M-${row.id}`,redirectUrl:`${site(env)}/bestelling.html#${row.id}:${body.token}`,webhookUrl:`${site(env)}/api/webhook`,metadata:{orderId:row.id}})});
+  const payment=await mollie(env,'payments',{method:'POST',headers:{'Idempotency-Key':row.id},body:JSON.stringify({amount:{currency:'EUR',value:(row.amount_cents/100).toFixed(2)},description:`Idea2Music · ${await orderReference(env,row.id)}`,redirectUrl:`${site(env)}/bestelling.html#${row.id}:${body.token}`,webhookUrl:`${site(env)}/api/webhook`,metadata:{orderId:row.id}})});
   const target=new URL(payment._links?.checkout?.href);
   if(target.protocol!=='https:'||!['www.mollie.com','mollie.com'].includes(target.hostname)) throw fail(502,'De betaallink is niet beschikbaar.');
   await env.ORDERS_DB.prepare('UPDATE orders SET payment_id=?,checkout_url=? WHERE id=? AND payment_id IS NULL').bind(payment.id,target.href,row.id).run();
@@ -126,15 +151,20 @@ async function checkout(request,env) {
 }
 async function cancel(request,env) {
  await limited(request,env,'cancel',5);
- const body=await readBody(request), id=String(body.orderId||'').replace(/^I2M-/,''), email=String(body.email||'').trim().toLowerCase();
- if(!validId(id)||!email) throw fail(400,'Vul uw volledige bestelnummer en e-mailadres in.');
- const row=await env.ORDERS_DB.prepare('SELECT * FROM orders WHERE id=?').bind(id).first();
+ const body=await readBody(request), input=String(body.orderId||'').trim().toUpperCase(), email=String(body.email||'').trim().toLowerCase();
+ const legacy=input.replace(/^I2M-/,'').toLowerCase(), serial=/^I2M-([0-9]{6,})$/.exec(input);
+ if(!validId(legacy)&&!serial) throw fail(400,'Vul een geldig bestelnummer in, bijvoorbeeld I2M-000001.');
+ if(!email) throw fail(400,'Vul een e-mailadres in.');
+ const row=serial
+  ? await env.ORDERS_DB.prepare('SELECT orders.* FROM orders JOIN order_numbers ON order_numbers.order_id=orders.id WHERE order_numbers.number=?').bind(Number(serial[1])).first()
+  : await env.ORDERS_DB.prepare('SELECT * FROM orders WHERE id=?').bind(legacy).first();
  // A generic response prevents revealing whether an order or email exists.
  if(!row||JSON.parse(row.payload_json).email.toLowerCase()!==email) return json({received:true});
+ const id=row.id, ref=await orderReference(env,id);
  const when=new Date().toISOString();
  await env.ORDERS_DB.prepare('UPDATE orders SET cancellation_requested_at=COALESCE(cancellation_requested_at,?) WHERE id=?').bind(when,id).run();
- await enqueue(env,row,'merchant-cancel','info@narrowvision.eu',`Annuleringsverzoek I2M-${id}`,`Er is annulering aangevraagd voor I2M-${id}. Stop de productie en controleer levering/betaling en wettelijke rechten. Verwerk een eventuele terugbetaling in Mollie.\nKlant: ${email}\nOntvangen: ${when}`);
- await enqueue(env,row,'customer-cancel',email,`Ontvangst annuleringsverzoek I2M-${id}`,`Uw annuleringsverzoek voor I2M-${id} is ontvangen. Dit bericht bevestigt uw verzoek; een eventuele terugbetaling wordt afzonderlijk verwerkt. Wij nemen contact met u op.\n\nIdea2Music · info@narrowvision.eu`);
+ await enqueue(env,row,'merchant-cancel','info@narrowvision.eu',`Annuleringsverzoek ${ref}`,`Er is annulering aangevraagd voor ${ref}. Stop de productie en controleer levering/betaling en wettelijke rechten. Verwerk een eventuele terugbetaling in Mollie.\nKlant: ${email}\nOntvangen: ${when}`);
+ await enqueue(env,row,'customer-cancel',email,`Ontvangst annuleringsverzoek ${ref}`,`Uw annuleringsverzoek voor ${ref} is ontvangen. Dit bericht bevestigt uw verzoek; een eventuele terugbetaling wordt afzonderlijk verwerkt. Wij nemen contact met u op.\n\nIdea2Music · info@narrowvision.eu`);
  await flush(env,id);
  return json({received:true});
 }
@@ -150,7 +180,7 @@ export async function onRequest({request,env,params}) {
    await limited(request,env,'status',45);
    let row=await authorize(request,env,new URL(request.url).searchParams.get('id'),access(request));
    if(row.payment_id) row=await syncPayment(env,row,await mollie(env,`payments/${row.payment_id}`));
-   return json({orderId:row.id,status:row.payment_status,amountCents:row.amount_cents,testMode:env.MOLLIE_API_KEY.startsWith('test_'),cancellationRequested:!!row.cancellation_requested_at});
+   return json({orderId:row.id,reference:await orderReference(env,row.id),status:row.payment_status,amountCents:row.amount_cents,testMode:env.MOLLIE_API_KEY.startsWith('test_'),cancellationRequested:!!row.cancellation_requested_at});
   }
   if(path==='webhook'&&request.method==='POST') {
    const text=await request.text();if(text.length>300)throw fail(400,'Ongeldig bericht.');

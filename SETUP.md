@@ -3,7 +3,7 @@
 Dit is een uitbreiding van botgerr-ops/Idea2music.nl voor het bestaande Pages-project idea2music-nl. Geen nieuwe hostingprovider. `main` blijft de productiebranch. De gebruiker heeft gekozen voor de live Mollie-sleutel; geen testomgeving of testbetaling aanmaken zonder nieuw verzoek. De activatieschakelaar blijft uit totdat de instellingen zijn gecontroleerd.
 
 ## Cloudflare
-1. Maak één D1-database voor orders. Voer `migrations/0001_orders.sql` uit in de D1 Console.
+1. Maak één D1-database voor orders. Voer `migrations/0001_orders.sql` uit in de D1 Console. Voor bestaande productie-omgevingen: voer **vóór het deployen van de korte bestelnummers** `migrations/0002_order_numbers.sql` één keer uit op de bestaande D1-database. De migratie bewaart de UUID's, betalingen en oude bestelverwijzingen. Maak vooraf een D1-back-up.
 2. Voeg een D1 binding toe aan Pages: naam `ORDERS_DB`. Kies de nieuwe database.
 3. Configureer runtime secrets in Pages, niet in GitHub of de browser:
    - `MOLLIE_API_KEY`: de **live_** key van het Idea2Music-websiteprofiel.
@@ -36,3 +36,16 @@ Tests dekken prijsovergang, ongeldige data/toestemming, gesloten configuratie, o
 
 ## Configuratie controleren zonder betalingen
 `GET /api/config` geeft alleen booleans voor database, sleutelvorm/aanwezigheid, afzender, site en activatieschakelaar. De databasecontrole leest nul klantregels en controleert de vereiste kolommen. De status van een betaalprovider of daadwerkelijke e-mailbezorging wordt hiermee niet bewezen. Geen geheimen of klantgegevens worden teruggestuurd.
+
+## Kort bestelnummer en e-mails
+- Het publieke bestelnummer is `I2M-000001`, `I2M-000002`, enz.; het interne order-ID blijft een UUID voor beveiliging, authenticatie, idempotentie en Mollie-metadata.
+- Oude bestelreferenties in eerdere e-mails (`I2M-<UUID>`) blijven geaccepteerd in het annuleringsformulier.
+- De klant- en opdrachtmails zijn overzichtelijker en krijgen een eenvoudige HTML-indeling én een leesbare tekstversie. De bestaande outbox blijft dubbele verzending beperken.
+- Er wordt nog **geen fiscale factuur gegenereerd of aan e-Boekhouden geschreven**. Activeer automatische facturatie pas na verificatie van de juiste juridische factuurgegevens, factuurnummerreeks en e-Boekhouden-API-inrichting. Een Mollie-betaalbevestiging is geen vervanging van een fiscale factuur.
+
+## Nog nodig voor e-Boekhouden en PDF-factuur
+1. Bevestig de exacte statutaire bedrijfsnaam/handelsnaam, vestigingsadres, KVK en btw-identificatienummer voor de factuur. Controleer of de huidige afzendergegevens in de checkoutcode nog kloppen.
+2. Maak in e-Boekhouden een **REST API-token** aan (niet de oude SOAP-codes) en zet het uitsluitend als Cloudflare Pages-secret, nooit in GitHub of de chat.
+3. Kies/controleer een factuursjabloon en BTW-/omzetgrootboekinstellingen voor het product. Laat e-Boekhouden de officiële, doorlopende factuurnummers toekennen.
+4. Bouw en test daarna afzonderlijk het aanmaken van de factuur uitsluitend na een geverifieerde, geslaagde Mollie-betaling. Gebruik een duurzame outbox/retry, bewaar de externe factuur-ID en voorkom dubbele facturen bij herhaalde webhooks. Alleen een bevestigde factuur mag als bijlage naar de klant worden gemaild.
+5. Test deze boekhoudkoppeling eerst met een daarvoor bedoeld testaccount/boekhouding: de e-Boekhouden-API heeft geen veilige externe sandbox. Activeer pas daarna op productie. Controleer afzonderlijk terugbetalingen en eventuele creditfacturen.

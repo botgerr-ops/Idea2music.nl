@@ -26,3 +26,13 @@ footer{max-width:1440px;margin:auto;padding:46px 6% 25px}.footer-top{display:fle
 @media(forced-colors:active){html{scrollbar-width:auto;scrollbar-color:auto}.button,.play-ring,.music-preview,.occasion-card{border:1px solid ButtonText}.little-spark{display:none}}
 
 .icon{flex-shrink:0;vertical-align:middle}.promise-strip>.icon{color:var(--berry)}
+
+/* I2M identity: crop the transparent artwork in CSS so the approved logo stays unaltered. */
+.brand-mark{display:flex;align-items:center;justify-content:flex-start;width:148px;height:62px;flex:0 0 148px;overflow:hidden}
+.brand-mark img{display:block;width:150px;height:auto;max-width:none;flex:0 0 auto;transform:translateY(-10px)}
+.brand-lockup{display:block;position:relative;width:225px;height:112px;flex:0 0 225px;overflow:hidden}
+.brand-lockup img{display:block;width:225px;height:auto;max-width:none;transform:translateY(-30px)}
+.album-mark{display:flex;align-items:center;justify-content:center;padding:0;overflow:hidden;background:var(--paper)}
+.album-mark img{width:61px;height:61px;max-width:none;transform:translateY(-2px)}
+@media(max-width:760px){.brand-mark{width:130px;height:56px;flex-basis:130px}.brand-mark img{width:132px;transform:translateY(-9px)}.brand-lockup{width:205px;height:103px;flex-basis:205px}.brand-lockup img{width:205px;transform:translateY(-27px)}}
+@media(max-width:360px){.brand-mark{width:108px;height:52px;flex-basis:108px}.brand-mark img{width:115px;transform:translateY(-7px)}}

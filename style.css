@@ -28,11 +28,12 @@ footer{max-width:1440px;margin:auto;padding:46px 6% 25px}.footer-top{display:fle
 .icon{flex-shrink:0;vertical-align:middle}.promise-strip>.icon{color:var(--berry)}
 
 /* Use the approved slogan lockup everywhere. The mark is a CSS crop of that exact image. */
-.brand-mark{display:block;position:relative;width:148px;height:64px;flex:0 0 148px;overflow:hidden}
-.brand-mark img{position:absolute;display:block;width:160px;height:auto;max-width:none;left:-6px;top:-22px;transform:none}
+.brand-mark{display:block;position:relative;width:148px;height:83px;flex:0 0 148px;overflow:hidden}
+.brand-mark img{position:absolute;display:block;width:160px;height:auto;max-width:none;left:-6px;top:-22px;transform:none;clip-path:inset(0 0 28% 0)}
+.brand.brand-mark>.brand-tagline{position:absolute;left:0;right:0;bottom:6px;color:#1a1720;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:-.035em;line-height:1.1;text-align:center;white-space:nowrap}
 .brand-lockup{display:block;position:relative;width:225px;height:112px;flex:0 0 225px;overflow:hidden}
 .brand-lockup img{display:block;width:225px;height:auto;max-width:none;transform:translateY(-30px)}
 .album-mark{position:relative;display:block;padding:0;overflow:hidden;background:var(--paper)}
 .album-mark img{position:absolute;width:66px;height:auto;max-width:none;left:-2px;top:8px;clip-path:inset(0 0 27% 0)}
-@media(max-width:760px){.brand-mark{width:130px;height:56px;flex-basis:130px}.brand-mark img{width:140px;left:-5px;top:-20px}.brand-lockup{width:205px;height:103px;flex-basis:205px}.brand-lockup img{width:205px;transform:translateY(-27px)}}
-@media(max-width:360px){.brand-mark{width:108px;height:48px;flex-basis:108px}.brand-mark img{width:120px;left:-6px;top:-17px}}
+@media(max-width:760px){.brand-mark{width:130px;height:77px;flex-basis:130px}.brand-mark img{width:140px;left:-5px;top:-20px}.brand.brand-mark>.brand-tagline{font-size:8.7px;bottom:5px}.brand-lockup{width:205px;height:103px;flex-basis:205px}.brand-lockup img{width:205px;transform:translateY(-27px)}}
+@media(max-width:360px){.brand-mark{width:108px;height:67px;flex-basis:108px}.brand-mark img{width:120px;left:-6px;top:-17px}.brand.brand-mark>.brand-tagline{font-size:7.4px;bottom:4px}}

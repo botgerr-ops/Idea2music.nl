@@ -21,3 +21,11 @@
 
 /annuleren
   X-Robots-Tag: noindex
+
+/dashboard.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: private, no-store
+
+/dashboard
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: private, no-store

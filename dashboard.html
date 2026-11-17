@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Mijn overzicht | Idea2Music</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/dashboard.css">
+  <script src="/dashboard.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Ga naar inhoud</a>
+  <header class="topbar">
+    <a href="/" class="identity" aria-label="Idea2Music startpagina">
+      <span class="identity-mark">I2M<span class="identity-note">♫</span></span>
+      <span class="identity-sub">Jij het idee. Wij de muziek.</span>
+    </a>
+    <span class="topbar-label"><span class="status-dot"></span> Achter de muziek</span>
+  </header>
+
+  <main id="main" class="shell">
+    <section id="login-view" class="login-layout" aria-labelledby="login-title">
+      <div class="intro">
+        <p class="eyebrow">Alleen voor de eigenaar</p>
+        <h1 id="login-title">Jouw muziek.<br><em>Jouw cijfers.</em></h1>
+        <p>Bestellingen en betalingen op één rustige plek. Geen ingewikkelde grafieken als je gewoon wilt weten hoe het loopt.</p>
+      </div>
+      <form id="login-form" class="login-paper">
+        <div class="paper-label">PRIVÉ · IDEA2MUSIC</div>
+        <h2>Even aanmelden</h2>
+        <p>Voer je geheime beheercode in. We bewaren deze code niet in je browser.</p>
+        <label for="admin-token">Beheercode</label>
+        <input id="admin-token" type="password" autocomplete="off" spellcheck="false" required placeholder="Plak hier je beheercode">
+        <button class="primary" type="submit" id="login-button">Bekijk mijn overzicht <span aria-hidden="true">↗</span></button>
+        <p id="login-message" class="notice" role="alert" hidden></p>
+      </form>
+    </section>
+
+    <section id="dashboard-view" aria-labelledby="dashboard-title" hidden>
+      <div class="overview-head">
+        <div>
+          <p class="eyebrow">Idea2Music · Beheer</p>
+          <h1 id="dashboard-title">Wat <em>speelt er?</em></h1>
+          <p class="overview-sub">Jouw bestellingen, gewoon helder op een rij.</p>
+        </div>
+        <div class="overview-actions">
+          <label for="period">Periode</label>
+          <select id="period">
+            <option value="7">Laatste 7 dagen</option>
+            <option value="30" selected>Laatste 30 dagen</option>
+            <option value="90">Laatste 90 dagen</option>
+          </select>
+          <button id="refresh" class="secondary" type="button">Vernieuwen ↻</button>
+          <button id="logout" class="quiet" type="button">Afmelden</button>
+        </div>
+      </div>
+
+      <p id="dashboard-message" class="notice" role="status" aria-live="polite" hidden></p>
+      <p id="test-warning" class="test-warning" hidden>Je Mollie-sleutel staat in testmodus. Controleer betaalde transacties voordat je bedragen als omzet boekt.</p>
+
+      <section class="ledger" aria-label="Samenvatting">
+        <div class="ledger-hero">
+          <div>
+            <p class="ledger-kicker">Geregistreerd betaald · inclusief btw</p>
+            <p id="paid-amount" class="money" aria-label="Betaald bedrag">—</p>
+          </div>
+          <div class="vinyl" aria-hidden="true"><div class="vinyl-label">I2M</div></div>
+        </div>
+        <div class="ledger-grid">
+          <div><span class="stat-label">Bestellingen gestart</span><strong id="started-orders">—</strong></div>
+          <div><span class="stat-label">Betalingen ontvangen</span><strong id="paid-orders">—</strong></div>
+          <div><span class="stat-label">Nog niet betaald</span><strong id="awaiting-orders">—</strong></div>
+          <div><span class="stat-label">Annulering aangevraagd</span><strong id="cancellation-orders">—</strong></div>
+        </div>
+      </section>
+
+      <div class="below-grid">
+        <section class="orders" aria-labelledby="orders-title">
+          <div class="section-heading"><div><p class="eyebrow">De laatste aanvragen</p><h2 id="orders-title">Besteloverzicht</h2></div><span class="small-meta" id="updated-at">—</span></div>
+          <div class="order-head" aria-hidden="true"><span>Bestelling</span><span>Status</span><span>Bedrag</span></div>
+          <ol class="order-list" id="orders-list"></ol>
+          <p class="empty" id="orders-empty" hidden>Er zijn nog geen bestellingen. Zodra iemand een lied aanvraagt, verschijnt die hier.</p>
+        </section>
+        <aside class="traffic" aria-labelledby="traffic-title">
+          <p class="eyebrow">Luister naar je bezoekers</p>
+          <h2 id="traffic-title">Wie komt er kijken?</h2>
+          <p>Bezoeken en paginaweergaven worden al gemeten door Cloudflare Web Analytics. Open die cijfers met de knop hieronder.</p>
+          <a class="traffic-link" href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">Bekijk bezoekers in Cloudflare <span aria-hidden="true">↗</span></a>
+          <div class="traffic-note"><strong>Goed om te weten</strong><br>Een websiteverzoek is niet hetzelfde als een bezoeker. Daarom tonen we hier bewust geen geschat bezoekersaantal.</div>
+        </aside>
+      </div>
+      <p class="footnote">Bedragen zijn bruto geregistreerde betalingen vóór eventuele terugbetalingen of Mollie-kosten. Het overzicht is geen fiscale omzetrapportage. Er worden geen klantnamen of persoonlijke verhalen geladen.</p>
+    </section>
+  </main>
+</body>
+</html>

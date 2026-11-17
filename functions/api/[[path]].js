@@ -1,4 +1,5 @@
 import {CONSENT_VERSION, CONSENT, DELIVERY, fields, priceAt, euro, validateOrder} from '../../lib/order-rules.js';
+import {maybeInvoicePaid} from '../../lib/ebookhouden.js';
 
 const json = (data, status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}});
 const fail = (status, message) => Object.assign(new Error(message), {status});
@@ -94,7 +95,12 @@ async function syncPayment(env,row,payment) {
  if(!['open','pending','authorized','paid','failed','canceled','expired'].includes(status)) throw fail(502,'Onbekende betaalstatus.');
  await env.ORDERS_DB.prepare("UPDATE orders SET payment_id=COALESCE(payment_id,?),payment_status=CASE WHEN payment_status='paid' THEN 'paid' ELSE ? END,paid_at=COALESCE(paid_at,?) WHERE id=?").bind(payment.id,status,status==='paid'?(payment.paidAt||new Date().toISOString()):null,row.id).run();
  const updated=await env.ORDERS_DB.prepare('SELECT * FROM orders WHERE id=?').bind(row.id).first();
- if(updated.payment_status==='paid') await notifyPaid(env,updated);
+ if(updated.payment_status==='paid') {
+  await notifyPaid(env,updated);
+  // Invoice failures must not affect the already verified Mollie payment.
+  // The integration remains off unless explicitly configured and enabled.
+  try { await maybeInvoicePaid(env,updated); } catch { /* monitored via invoice_outbox */ }
+ }
  return updated;
 }
 async function checkout(request,env) {

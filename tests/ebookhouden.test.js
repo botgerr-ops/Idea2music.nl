@@ -78,3 +78,15 @@ test('uncertain invoice response stays in review and is never automatically retr
   assert.equal(x.db.prepare('SELECT state FROM invoice_outbox').get().state,'review');
  }finally{x.close();}
 });
+test('foreign orders stay paid but require manual VAT review before invoice creation',async()=>{
+ const x=fixture();let requests=0;
+ x.row.payload_json=JSON.stringify({...JSON.parse(x.row.payload_json),billingCountry:'België'});
+ globalThis.fetch=async()=>{requests++;throw Error('No remote API should be called');};
+ try{
+  await maybeInvoicePaid(x.env,x.row);
+  assert.equal(requests,0);
+  const state=x.db.prepare('SELECT state,error_code FROM invoice_outbox').get();
+  assert.equal(state.state,'review');
+  assert.equal(state.error_code,'ebookhouden_foreign_invoice_review');
+ }finally{x.close();}
+});

@@ -21,7 +21,7 @@ De code haalt de IDs zelf op via de read-only endpoints `GET /v1/invoicetemplate
 5. Verifieer afzonderlijk dat de Mollie-uitbetaling en eventuele kosten correct worden geboekt. 'Reeds betaald' op een factuur **boekt de bankontvangst niet vanzelf af**.
 6. Pas daarna de activeringsvariabele op `true` zetten en productie opnieuw deployen.
 
-De factuur wordt alleen geprobeerd na een door Mollie als `paid` geverifieerde **live** betaling. Testbetalingen maken nooit facturen aan. Per bestelling is er maximaal één automatische poging. Als de verbinding na een factuurverzoek wegvalt, blijft de rij `review`; vóór handmatige afhandeling **eerst** in e-Boekhouden zoeken naar `I2M-<bestel-id>` (referentie), zodat geen dubbele factuur kan ontstaan. Herstel nooit automatisch met een tweede POST.
+De factuur wordt alleen geprobeerd na een door Mollie als `paid` geverifieerde **live** betaling. Testbetalingen maken nooit facturen aan. Voor bestellingen met een factuuradres buiten Nederland wordt voorlopig **geen** automatische factuur gemaakt: deze orders komen in `review` (`ebookhouden_foreign_invoice_review`) totdat de internationale btw-behandeling is ingericht. De bestaande checkout kan deze bestellingen nog steeds ontvangen; zorg dus voor handmatige opvolging van deze review-rijen. Per bestelling is er maximaal één automatische poging. Als de verbinding na een factuurverzoek wegvalt, blijft de rij `review`; vóór handmatige afhandeling **eerst** in e-Boekhouden zoeken naar `I2M-<bestel-id>` (referentie), zodat geen dubbele factuur kan ontstaan. Herstel nooit automatisch met een tweede POST.
 
 Noot: e-Boekhouden kent geen idempotency-key op `POST /v1/invoice`. Daarom ontbreekt opzettelijk een automatische retry en wordt niet zonder bevestiging gefactureerd.
 

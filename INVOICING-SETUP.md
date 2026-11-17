@@ -8,16 +8,14 @@ Er worden **geen facturen aangemaakt** totdat de beheerder bewust `EBOEKHOUDEN_I
 | Variabele | Waarde |
 | --- | --- |
 | `EBOEKHOUDEN_API_TOKEN` | Bestaand geheim; **nooit** delen of in git zetten |
-| `EBOEKHOUDEN_TEMPLATE_ID` | Numeriek ID van het speciale Idea2Music-factuursjabloon |
-| `EBOEKHOUDEN_LEDGER_ID` | Numeriek ID van een geschikte omzetrekening, vooraf met boekhouder controleren |
 | `EBOEKHOUDEN_INVOICING_ENABLED` | **Niet instellen / `false`** totdat de controle hieronder klaar is |
 
-De twee ID's zijn uitleesbaar via `GET /v1/invoicetemplate` en `GET /v1/ledger`, met de tijdelijke sessietoken uit `POST /v1/session`. Selecteer bewust het Idea2Music-sjabloon; selecteer geen willekeurig grootboekrekeningnummer. De benodigde token is al in Cloudflare gezet, maar deze code kan niet op afstand weten welk sjabloon/ledger Robin bedoelt.
+De code haalt de IDs zelf op via de read-only endpoints `GET /v1/invoicetemplate` en `GET /v1/ledger`, met de tijdelijke sessietoken uit `POST /v1/session`. De koppeling staat alleen het exact benoemde sjabloon `Idea2Music` en grootboekcode `8050` toe. Ontbreekt een van beide, of zijn er meerdere treffers, dan wordt **geen** factuur verzonden en wordt handmatige controle vereist. De naam/code zijn op 17 november 2026 in e-Boekhouden door Robin bevestigd.
 
 ## Vóór activeren
 
 1. Voeg `migrations/0002_invoice_outbox.sql` toe aan de productie-D1-database **ORDERS_DB**.
-2. Bevestig de twee ID's en de 21%-btw-code voor dit product, óók bij bestellingen buiten Nederland. De huidige bouw gaat uit van een Nederlandse binnenlandse verkoop; internationale fiscale behandeling moet eerst worden uitgewerkt.
+2. Controleer de 21%-btw-code voor dit product, óók bij bestellingen buiten Nederland. De huidige bouw gaat uit van een Nederlandse binnenlandse verkoop; internationale fiscale behandeling moet eerst worden uitgewerkt.
 3. Controleer in e-Boekhouden de afzender, factuurlay-out, factuurmail en de betekenis van `termOfPayment: 0` en 'reeds betaald'.
 4. Doe één gecontroleerde **echte** proefbetaling na expliciete toestemming, controleer **één** factuur, **één** factuurmail en de geldige factuurnummerreeks.
 5. Verifieer afzonderlijk dat de Mollie-uitbetaling en eventuele kosten correct worden geboekt. 'Reeds betaald' op een factuur **boekt de bankontvangst niet vanzelf af**.

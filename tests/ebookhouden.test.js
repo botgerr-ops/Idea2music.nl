@@ -2,14 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
-import {maybeInvoicePaid,invoicingConfigured,invoicePayload,selectAccountingIds} from '../lib/ebookhouden.js';
+import {maybeInvoicePaid,invoicingConfigured,invoicePayload,invoiceSenderEmail,selectAccountingIds} from '../lib/ebookhouden.js';
 
 const originalFetch=globalThis.fetch;
 function fixture(){
  const db=new DatabaseSync(':memory:');
  for(const migration of ['0001_orders.sql','0002_invoice_outbox.sql','0003_invoice_test_billing.sql']) db.exec(readFileSync(new URL(`../migrations/${migration}`,import.meta.url),'utf8'));
  const binding={prepare(sql){let params=[];return{bind(...args){params=args;return this;},async first(){return db.prepare(sql).get(...params)||null;},async run(){return db.prepare(sql).run(...params);}};}};
- const env={ORDERS_DB:binding,EBOEKHOUDEN_INVOICING_ENABLED:'true',EBOEKHOUDEN_API_TOKEN:'never-log-me',MOLLIE_API_KEY:'live_dummy'};
+ const env={ORDERS_DB:binding,EBOEKHOUDEN_INVOICING_ENABLED:'true',EBOEKHOUDEN_API_TOKEN:'never-log-me',MOLLIE_API_KEY:'live_dummy',MAIL_FROM:'Idea2Music <info@narrowvision.eu>'};
  const orderId=crypto.randomUUID();
  const row={id:orderId,payment_status:'paid',amount_cents:750,paid_at:'2026-11-17T10:00:00Z',payment_id:'tr_test',payload_json:JSON.stringify({name:'Test Klant',email:'test@example.test',billingStreet:'Teststraat',billingNumber:'5',billingPostalCode:'1234 AB',billingCity:'Rotterdam',billingCountry:'Nederland'})};
  env.EBOEKHOUDEN_TEST_ORDER_ID=orderId;
@@ -63,13 +63,19 @@ test('legacy paid order can use a separate private billing override without chan
 test('invoice amounts include 21% VAT and refer to the paid Mollie order',()=>{
  const x=fixture();try{
   const data=JSON.parse(x.row.payload_json);
-  const invoice=invoicePayload(x.row,data,99,{templateId:123,ledgerId:456});
+  const invoice=invoicePayload(x.row,data,99,{templateId:123,ledgerId:456},invoiceSenderEmail(x.env));
   assert.equal(invoice.items[0].pricePerUnit,7.5);
   assert.equal(invoice.items[0].vatCode,'HOOG_VERK_21');
   assert.equal(invoice.inExVat,'IN');
   assert.equal(invoice.reference,`I2M-${x.row.id.replace(/-/g,'').slice(0,20)}`);
   assert.match(invoice.text,/Reeds betaald/);
+  assert.equal(invoice.email.fromEmail,'info@narrowvision.eu');
  }finally{x.close();}
+});
+test('sender address is extracted safely and invalid settings stop before API calls',()=>{
+ assert.equal(invoiceSenderEmail({MAIL_FROM:'Idea2Music <info@narrowvision.eu>'}),'info@narrowvision.eu');
+ assert.equal(invoiceSenderEmail({MAIL_FROM:'info@narrowvision.eu'}),'info@narrowvision.eu');
+ assert.throws(()=>invoiceSenderEmail({MAIL_FROM:'Idea2Music'}),/ebookhouden_sender_invalid/);
 });
 test('only exact Idea2Music template and ledger 8050 can be selected',()=>{
  const templates={items:[{id:1,name:'Factuur narrow',active:true},{id:123,name:'Idea2Music',active:true}]};
@@ -87,7 +93,7 @@ test('a duplicate webhook never sends a second e-Boekhouden invoice',async()=>{
   if(String(url).includes('/v1/ledger?')) return Response.json({items:[{id:456,code:'8050'}]});
   if(String(url).includes('/v1/relation?')) return Response.json({items:[]});
   if(String(url).endsWith('/v1/relation')) {relations++;const data=JSON.parse(options.body);assert.equal(data.country,'NL');return Response.json({id:10},{status:201});}
-  if(String(url).endsWith('/v1/invoice')) {sent++;const payload=JSON.parse(options.body);assert.equal(payload.templateId,123);return Response.json({id:22,invoiceNumber:'I2M-001'},{status:201});}
+  if(String(url).endsWith('/v1/invoice')) {sent++;const payload=JSON.parse(options.body);assert.equal(payload.templateId,123);assert.equal(payload.email.fromEmail,'info@narrowvision.eu');return Response.json({id:22,invoiceNumber:'I2M-001'},{status:201});}
   throw Error('Unexpected call');
  };
  try {

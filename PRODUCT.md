@@ -10,6 +10,13 @@ Source: Robin's explicit conversation decisions, 14 November 2026.
 - Customer can request free cancellation before delivery. Statutory rights for digital content and faulty products remain applicable.
 - AI production and delivery are performed manually by Robin. This change does not implement file delivery or automatic refunds.
 
+## Contact- en factuurgegevens (17 november 2026)
+
+- De aanvraag vraagt voortaan naast naam en e-mail ook een factuuradres: straat, huisnummer/toevoeging, postcode, woonplaats en land. Het lied wordt nog steeds uitsluitend per e-mail geleverd.
+- Telefoonnummer, bedrijfsnaam en btw-nummer zijn optioneel. Telefoon alleen gebruiken voor vragen over de bestelling, niet voor marketing.
+- Het factuuradres en de optionele gegevens worden via het bestaande gevalideerde formulier in de D1-order opgeslagen en lopen mee in het besteloverzicht en de transactionele e-mails. Er is geen nieuwe D1-migratie nodig.
+- Dit voegt **nog geen PDF-factuur of koppeling met e-Boekhouden** toe. Voor oude orders zijn deze velden niet beschikbaar; toon nooit fictieve adressen.
+
 ## Integration contracts and release gates
 - Mollie Payments API: amount, order metadata and test/live mode are verified server-side; an unauthenticated webhook only triggers an authenticated Mollie lookup.
 - Payments API idempotency lasts one hour. A checkout attempt is resumable for at most 30 minutes; subsequent new attempt is explicit.

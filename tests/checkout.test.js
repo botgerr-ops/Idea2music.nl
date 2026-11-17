@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 import {onRequest} from '../functions/api/[[path]].js';
 import {priceAt,PROMO_END,validateOrder} from '../lib/order-rules.js';
 const originalFetch=globalThis.fetch;
-const answers={name:'Robin Test',email:'customer@example.test',recipient:'Sam',occasion:'Verjaardag',story:'Een persoonlijk verhaal met voldoende details voor een lied.',style:'Pop',mood:'Vrolijk',language:'Nederlands',pronunciation:'',avoid:'',terms:true,digitalConsent:true};
+const answers={name:'Robin Test',email:'customer@example.test',phone:'',billingStreet:'Voorbeeldstraat',billingNumber:'12A',billingPostalCode:'1234 AB',billingCity:'Rotterdam',billingCountry:'Nederland',company:'',vatNumber:'',recipient:'Sam',occasion:'Verjaardag',story:'Een persoonlijk verhaal met voldoende details voor een lied.',style:'Pop',mood:'Vrolijk',language:'Nederlands',pronunciation:'',avoid:'',terms:true,digitalConsent:true};
 function setup(){
  const db=new DatabaseSync(':memory:');db.exec(readFileSync(new URL('../migrations/0001_orders.sql',import.meta.url),'utf8'));
  const binding={prepare(sql){let params=[];return{bind(...args){params=args;return this;},async first(){return db.prepare(sql).get(...params)||null;},async all(){return{results:db.prepare(sql).all(...params)};},async run(){return db.prepare(sql).run(...params);}};}};
@@ -30,6 +30,23 @@ function setup(){
 }
 test('November offer ends at Dutch midnight, never inferred from client price',()=>{assert.equal(priceAt(PROMO_END-1),750);assert.equal(priceAt(PROMO_END),1500);});
 test('questionnaire requires valid email, story and both explicit consents',()=>{const result=validateOrder({...answers,email:'wrong',story:'kort',digitalConsent:false,terms:false});assert.deepEqual(Object.keys(result.errors).sort(),['digitalConsent','email','story','terms']);});
+test('billing address is required, while phone and business details are optional',()=>{
+ const missing=validateOrder({...answers,billingStreet:'',billingNumber:'',billingPostalCode:'',billingCity:'',billingCountry:''});
+ assert.deepEqual(Object.keys(missing.errors).sort(),['billingCity','billingCountry','billingNumber','billingPostalCode','billingStreet']);
+ const valid=validateOrder(answers);
+ assert.deepEqual(valid.errors,{});
+ assert.equal(valid.values.phone,'');
+ assert.equal(valid.values.company,'');
+ assert.equal(valid.values.billingPostalCode,'1234 AB');
+});
+test('every billing field has a matching input and error message in the form',()=>{
+ const page=readFileSync(new URL('../bestellen.html',import.meta.url),'utf8');
+ for(const name of ['phone','billingStreet','billingNumber','billingPostalCode','billingCity','billingCountry','company','vatNumber']){
+  assert.match(page,new RegExp(`name="${name}"`));
+  assert.match(page,new RegExp(`id="${name}-error"`));
+ }
+ assert.match(page,/factuuradres, eventuele contact- en bedrijfsgegevens/);
+});
 test('checkout is closed unless every activation dependency exists',async()=>{const x=setup();try{delete x.env.RESEND_API_KEY;assert.equal((await (await x.call('config')).json()).enabled,false);assert.equal((await x.start()).status,503);assert.equal(x.created,0);}finally{x.close();}});
 test('rejects cross-origin checkout and client price manipulation',async()=>{const x=setup();try{assert.equal((await x.call('checkout',{method:'POST',origin:'https://evil.test',body:{...x.identity,answers,amountCents:750}})).status,403);assert.equal((await x.call('checkout',{method:'POST',body:{...x.identity,answers,amountCents:1}})).status,409);assert.equal(x.created,0);}finally{x.close();}});
 test('same checkout is resumable and creates only one payment',async()=>{const x=setup();try{assert.equal((await x.start()).status,200);assert.equal((await x.start()).status,200);assert.equal(x.created,1);assert.equal(x.db.prepare('SELECT count(*) n FROM orders').get().n,1);assert.equal(x.emails,0);}finally{x.close();}});

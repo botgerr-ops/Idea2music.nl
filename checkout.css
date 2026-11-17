@@ -4,3 +4,8 @@
 
 
 .order-intro h1,.order-panel h1{font-family:var(--display)}.order-intro{margin-bottom:35px}.order-panel{background:var(--white)}.order-panel input:not([type=checkbox]),.order-panel textarea{background:var(--white);border-color:#bca6a5}.order-page{padding-top:45px}.order-policies summary{min-height:55px}.order-policies details p{max-width:100%}.order-policies details{border-bottom:0}body>footer:not(:has(.footer-top)){display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;border-top:1px solid var(--line)}
+
+/* Factuuradres: plaats korte velden naast elkaar, maar houd mobiel één kolom. */
+.field-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
+.field-row .field{min-width:0}
+@media(max-width:650px){.field-row{grid-template-columns:1fr;gap:0}}

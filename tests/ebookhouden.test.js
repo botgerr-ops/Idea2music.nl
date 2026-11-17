@@ -67,7 +67,7 @@ test('invoice amounts include 21% VAT and refer to the paid Mollie order',()=>{
   assert.equal(invoice.items[0].pricePerUnit,7.5);
   assert.equal(invoice.items[0].vatCode,'HOOG_VERK_21');
   assert.equal(invoice.inExVat,'IN');
-  assert.equal(invoice.reference,`I2M-${x.row.id}`);
+  assert.equal(invoice.reference,`I2M-${x.row.id.replace(/-/g,'').slice(0,20)}`);
   assert.match(invoice.text,/Reeds betaald/);
  }finally{x.close();}
 });
@@ -112,6 +112,28 @@ test('uncertain invoice response stays in review and is never automatically retr
   await maybeInvoicePaid(x.env,x.row);
   assert.equal(attempts,1);
   assert.equal(x.db.prepare('SELECT state FROM invoice_outbox').get().state,'review');
+ }finally{x.close();}
+});
+test('invoice HTTP 400 preserves a safe API validation code and never retries',async()=>{
+ const x=fixture();let attempts=0;
+ globalThis.fetch=async(url)=>{
+  if(String(url).endsWith('/v1/session')) return Response.json({token:'session'});
+  if(String(url).includes('/v1/invoicetemplate?')) return Response.json({items:[{id:123,name:'Idea2Music',active:true}]});
+  if(String(url).includes('/v1/ledger?')) return Response.json({items:[{id:456,code:'8050'}]});
+  if(String(url).includes('/v1/relation?')) return Response.json({items:[{id:10,code:`I2M${x.row.id.replace(/-/g,'').slice(0,25)}`}]});
+  if(String(url).endsWith('/v1/invoice')){
+   attempts++;
+   return Response.json({errors:[{code:'FACT_014',message:'Contains customer PII and should never be stored'}]},{status:400});
+  }
+  throw Error('Unexpected call');
+ };
+ try {
+  await maybeInvoicePaid(x.env,x.row);
+  await maybeInvoicePaid(x.env,x.row);
+  assert.equal(attempts,1);
+  const recorded=x.db.prepare('SELECT state,error_code FROM invoice_outbox').get();
+  assert.equal(recorded.state,'review');
+  assert.equal(recorded.error_code,'ebookhouden_invoice_fact_014');
  }finally{x.close();}
 });
 test('foreign orders stay paid but require manual VAT review before invoice creation',async()=>{

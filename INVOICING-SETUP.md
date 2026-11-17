@@ -1,0 +1,30 @@
+# Idea2Music – e-Boekhouden facturen (voorbereid, UIT)
+
+De koppeling gebruikt de officiële e-Boekhouden REST API.
+Er worden **geen facturen aangemaakt** totdat de beheerder bewust `EBOEKHOUDEN_INVOICING_ENABLED=true` zet.
+
+## Benodigde Cloudflare Pages-variabelen (Production)
+
+| Variabele | Waarde |
+| --- | --- |
+| `EBOEKHOUDEN_API_TOKEN` | Bestaand geheim; **nooit** delen of in git zetten |
+| `EBOEKHOUDEN_TEMPLATE_ID` | Numeriek ID van het speciale Idea2Music-factuursjabloon |
+| `EBOEKHOUDEN_LEDGER_ID` | Numeriek ID van een geschikte omzetrekening, vooraf met boekhouder controleren |
+| `EBOEKHOUDEN_INVOICING_ENABLED` | **Niet instellen / `false`** totdat de controle hieronder klaar is |
+
+De twee ID's zijn uitleesbaar via `GET /v1/invoicetemplate` en `GET /v1/ledger`, met de tijdelijke sessietoken uit `POST /v1/session`. Selecteer bewust het Idea2Music-sjabloon; selecteer geen willekeurig grootboekrekeningnummer. De benodigde token is al in Cloudflare gezet, maar deze code kan niet op afstand weten welk sjabloon/ledger Robin bedoelt.
+
+## Vóór activeren
+
+1. Voeg `migrations/0002_invoice_outbox.sql` toe aan de productie-D1-database **ORDERS_DB**.
+2. Bevestig de twee ID's en de 21%-btw-code voor dit product, óók bij bestellingen buiten Nederland. De huidige bouw gaat uit van een Nederlandse binnenlandse verkoop; internationale fiscale behandeling moet eerst worden uitgewerkt.
+3. Controleer in e-Boekhouden de afzender, factuurlay-out, factuurmail en de betekenis van `termOfPayment: 0` en 'reeds betaald'.
+4. Doe één gecontroleerde **echte** proefbetaling na expliciete toestemming, controleer **één** factuur, **één** factuurmail en de geldige factuurnummerreeks.
+5. Verifieer afzonderlijk dat de Mollie-uitbetaling en eventuele kosten correct worden geboekt. 'Reeds betaald' op een factuur **boekt de bankontvangst niet vanzelf af**.
+6. Pas daarna de activeringsvariabele op `true` zetten en productie opnieuw deployen.
+
+De factuur wordt alleen geprobeerd na een door Mollie als `paid` geverifieerde **live** betaling. Testbetalingen maken nooit facturen aan. Per bestelling is er maximaal één automatische poging. Als de verbinding na een factuurverzoek wegvalt, blijft de rij `review`; vóór handmatige afhandeling **eerst** in e-Boekhouden zoeken naar `I2M-<bestel-id>` (referentie), zodat geen dubbele factuur kan ontstaan. Herstel nooit automatisch met een tweede POST.
+
+Noot: e-Boekhouden kent geen idempotency-key op `POST /v1/invoice`. Daarom ontbreekt opzettelijk een automatische retry en wordt niet zonder bevestiging gefactureerd.
+
+API-specificatie: https://api.e-boekhouden.nl/openapi/v1.json

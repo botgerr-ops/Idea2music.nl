@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
-import {maybeInvoicePaid,invoicingConfigured,invoicePayload,invoiceSenderEmail,selectAccountingIds} from '../lib/ebookhouden.js';
+import {maybeInvoicePaid,invoicingConfigured,invoiceAllowedForOrder,invoicePayload,invoiceSenderEmail,selectAccountingIds} from '../lib/ebookhouden.js';
 
 const originalFetch=globalThis.fetch;
 function fixture(){
@@ -11,7 +11,7 @@ function fixture(){
  const binding={prepare(sql){let params=[];return{bind(...args){params=args;return this;},async first(){return db.prepare(sql).get(...params)||null;},async run(){return db.prepare(sql).run(...params);}};}};
  const env={ORDERS_DB:binding,EBOEKHOUDEN_INVOICING_ENABLED:'true',EBOEKHOUDEN_API_TOKEN:'never-log-me',MOLLIE_API_KEY:'live_dummy',MAIL_FROM:'Idea2Music <info@narrowvision.eu>'};
  const orderId=crypto.randomUUID();
- const row={id:orderId,payment_status:'paid',amount_cents:750,paid_at:'2026-11-17T10:00:00Z',payment_id:'tr_test',payload_json:JSON.stringify({name:'Test Klant',email:'test@example.test',billingStreet:'Teststraat',billingNumber:'5',billingPostalCode:'1234 AB',billingCity:'Rotterdam',billingCountry:'Nederland'})};
+ const row={id:orderId,payment_status:'paid',created_at:'2026-11-17T09:00:00.000Z',amount_cents:750,paid_at:'2026-11-17T10:00:00Z',payment_id:'tr_test',payload_json:JSON.stringify({name:'Test Klant',email:'test@example.test',billingStreet:'Teststraat',billingNumber:'5',billingPostalCode:'1234 AB',billingCity:'Rotterdam',billingCountry:'Nederland'})};
  env.EBOEKHOUDEN_TEST_ORDER_ID=orderId;
  db.prepare('INSERT INTO orders(id,token_hash,payload_hash,payload_json,amount_cents,created_at,consent_version,payment_status) VALUES(?,?,?,?,?,?,?,?)').run(row.id,'x','x',row.payload_json,750,row.paid_at,'v1','paid');
  return {db,env,row,close(){db.close();globalThis.fetch=originalFetch;}};
@@ -31,6 +31,35 @@ test('pilot order allowlist blocks every other paid order before any database or
  try{
   await maybeInvoicePaid(x.env,{...x.row,id:crypto.randomUUID()});
   assert.equal(requests,0);
+  assert.equal(x.db.prepare('SELECT count(*) AS n FROM invoice_outbox').get().n,0);
+ }finally{x.close();}
+});
+test('new-orders mode is fail-closed without a valid explicit UTC cutoff',()=>{
+ const x=fixture();try {
+  x.env.EBOEKHOUDEN_INVOICING_MODE='new-orders';
+  assert.equal(invoicingConfigured(x.env),false);
+  for(const invalid of ['','2026-11-17','2026-11-17T08:00:00Z','2026-02-30T00:00:00.000Z','yesterday']) {
+   x.env.EBOEKHOUDEN_NEW_ORDERS_FROM=invalid;
+   assert.equal(invoicingConfigured(x.env),false);
+   assert.equal(invoiceAllowedForOrder(x.env,x.row),false);
+  }
+  x.env.EBOEKHOUDEN_INVOICING_MODE='all';
+  assert.equal(invoicingConfigured(x.env),false);
+ }finally{x.close();}
+});
+test('new-orders mode only invoices genuinely new paid orders and never backfills old ones',async()=>{
+ const x=fixture();let calls=0;
+ globalThis.fetch=async()=>{calls++;throw Error('should not be called');};
+ try {
+  x.env.EBOEKHOUDEN_INVOICING_MODE='new-orders';
+  x.env.EBOEKHOUDEN_NEW_ORDERS_FROM='2026-11-17T09:00:00.000Z';
+  assert.equal(invoicingConfigured(x.env),true);
+  assert.equal(invoiceAllowedForOrder(x.env,x.row),true);
+  assert.equal(invoiceAllowedForOrder(x.env,{...x.row,payment_status:'open'}),false);
+  const old={...x.row,created_at:'2026-11-16T09:00:00.000Z'};
+  assert.equal(invoiceAllowedForOrder(x.env,old),false);
+  await maybeInvoicePaid(x.env,old);
+  assert.equal(calls,0);
   assert.equal(x.db.prepare('SELECT count(*) AS n FROM invoice_outbox').get().n,0);
  }finally{x.close();}
 });

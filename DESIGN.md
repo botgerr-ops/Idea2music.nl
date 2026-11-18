@@ -54,8 +54,8 @@ style.css owns --berry, --ink, --muted, --paper, --white, --coral, --pink, --yel
 --font: DM Sans 400/600. --display: Bricolage 800. Rounded large lettering gives the music-gift brand character while body/form text remains quiet. Inputs stay 16px for iOS. Dutch, nl-NL EUR and the existing Europe/Amsterdam price boundary remain unchanged.
 
 ## Layout
-Two-column marketing hero: story/CTA left, gift/listening sample right. Mobile reading order: story, CTA, transparent price, artwork, sample. Follow with promise strip, three occasion illustrations, actual three-step process, native FAQs and final order invitation. No hamburger or obstructive sticky controls.
-Questionnaire remains document-scrolling single column with max-width 780px. Existing validation, payment, cancellation, consent and privacy behavior stays canonical. Errors reserve 20px; feedback 52px. Long stories wrap; no sticky control obscures the keyboard.
+Two-column marketing hero: story/CTA left, gift/listening sample right. Mobile reading order: story, CTA, transparent price, listening sample, artwork. Follow with promise strip, three occasion illustrations, the four-part human-reviewed production process, native FAQs and final order invitation. No hamburger or obstructive sticky controls.
+Questionnaire remains document-scrolling single column with max-width 780px. The three-step form contains optional guided personal questions within the existing story brief, with no new order fields or database columns. Existing validation, payment, cancellation, consent and privacy behavior stays canonical. Errors reserve 20px; feedback 52px. Long stories wrap; no sticky control obscures the keyboard.
 
 ## Elevation & Depth
 Only the envelope is expressive. Other surfaces use quiet borders without floating shadows. Avoid gradients, technical dashboard tiles and a SaaS aesthetic.

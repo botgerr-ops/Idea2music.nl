@@ -13,6 +13,7 @@ Visual contract: DESIGN.md. Business and data policy: PRODUCT.md (conversation d
 No select/listbox, date picker, tables, dialogs, login or CRUD admin exists. Free-text music/sphere/language is intentional. Native checkboxes and details are canonical browser primitives.
 
 - Review validates all questionnaire fields and focuses the first error. Back preserves every value.
+- The optional personal prompts (memory, qualities, perspective, avoidTopics and voicePreference) are gathered in the first two steps and joined with labels into the existing `story` value on the client. The server accepts only the established fields; no D1 migration or new payment contract is involved. The combined story must stay within 4,000 characters. The review shows the resulting production brief.
 - Final submit requires both explicit checkboxes; shows pending feedback and prevents duplicate submits. Retrying the same submitted payload reuses the same private attempt.
 - Status access uses an unguessable bearer code. Only order reference, price, payment state and cancellation flag are returned; no questionnaire or email.
 - Mollie redirect only starts a server lookup. Failed lookup never instructs customer to pay again.

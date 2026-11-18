@@ -1,11 +1,18 @@
 import {fields,validateOrder,euro,priceAt,PROMO_END} from './lib/order-rules.js';
+import {composeStory,storyPromptKeys} from './lib/story-intake.js';
 const form=document.getElementById('order-form');
 const pay=document.getElementById('pay-button');
 const feedback=document.getElementById('form-feedback');
 for(const id of ['review-button','edit-button','new-attempt']) document.getElementById(id).disabled=false;
 let config={enabled:false,amountCents:priceAt()}, busy=false, identity=null, submittedPayload=null, dirty=false, navigating=false;
 const freshIdentity=()=>({orderId:crypto.randomUUID(),token:Array.from(crypto.getRandomValues(new Uint8Array(32))).map(x=>x.toString(16).padStart(2,'0')).join('')});
-const answers=()=>({...Object.fromEntries(new FormData(form)),terms:form.elements.terms.checked,digitalConsent:form.elements.digitalConsent.checked});
+const answers=()=>{
+ const values=Object.fromEntries(new FormData(form));
+ values.story=composeStory(values);
+ // These extra answers travel within `story`; the API accepts no new fields.
+ for(const key of storyPromptKeys)delete values[key];
+ return {...values,terms:form.elements.terms.checked,digitalConsent:form.elements.digitalConsent.checked};
+};
 
 // Keep the original invoice and payment fields unchanged. Only their presentation
 // is reorganised: a personal story, the musical choices, then customer details.
@@ -13,8 +20,8 @@ const questions=document.getElementById('questions');
 const originalGroups=[...questions.querySelectorAll(':scope > fieldset')];
 if(originalGroups.length!==4)throw Error('Onverwachte opbouw van het bestelformulier.');
 const stepDefinitions=[
- {title:'Uw verhaal',hint:'Voor wie is het lied en welke herinneringen maken het bijzonder?',groups:[originalGroups[2]],keys:['recipient','occasion','story']},
- {title:'De muziek',hint:'Kies de stijl, sfeer en taal. Een lastige naam? Schrijf de uitspraak erbij.',groups:[originalGroups[3]],keys:['style','mood','language','pronunciation']},
+ {title:'Uw verhaal',hint:'Een paar echte herinneringen maken meer indruk dan perfecte woorden. Wij werken het uit.',groups:[originalGroups[2]],keys:['recipient','occasion','story']},
+ {title:'De muziek',hint:'Kies de stijl, sfeer, taal en eventueel een stemvoorkeur.',groups:[originalGroups[3]],keys:['style','mood','language','pronunciation']},
  {title:'Uw gegevens',hint:'Nog even de contact- en factuurgegevens, daarna kunt u alles controleren.',groups:[originalGroups[0],originalGroups[1]],keys:['name','email','phone','billingStreet','billingNumber','billingPostalCode','billingCity','billingCountry','company','vatNumber']}
 ];
 const heading=document.getElementById('form-title');
@@ -55,6 +62,7 @@ function showStep(index,focus=true){
 }
 showStep(0,false);
 function showErrors(errors,keys=[...Object.keys(fields),'terms','digitalConsent']) {
+ if(errors.story && answers().story.length>fields.story.max)errors.story='Uw volledige verhaal is te lang. Kort één van de antwoorden in (maximaal 4.000 tekens samen).';
  for(const key of keys){const el=form.elements[key];el.setAttribute('aria-invalid',String(!!errors[key]));document.getElementById(`${key}-error`).textContent=errors[key]||'';}
  const first=keys.find(key=>errors[key]);if(first)form.elements[first].focus();return !first;
 }

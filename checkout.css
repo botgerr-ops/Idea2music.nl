@@ -26,6 +26,12 @@
 .step-next{background:var(--berry);color:var(--white);border-radius:var(--control-radius);font-size:15px;font-weight:700}
 .step-next:hover{filter:brightness(1.08)}
 .step-back{margin-right:auto}
+.story-intro{max-width:580px;font-size:14px;margin:0 0 22px}
+.story-guide{margin:30px 0 4px;padding:23px 24px 10px;background:var(--paper);border:1px solid var(--line);border-radius:18px}
+.story-guide h3{font-family:var(--font);font-size:18px;letter-spacing:-.02em;line-height:1.4;margin:0 0 4px}
+.story-guide h3 span{display:block;font-size:12px;letter-spacing:0;color:var(--muted);font-weight:400}
+.story-guide .field-hint{margin-bottom:18px}
+.story-guide input:not([type=checkbox]),.story-guide textarea{background:var(--white)}
 @media(max-width:650px){
  .order-progress{gap:7px;margin-top:22px}
  .order-progress li{gap:6px;padding-top:10px;font-size:11px}
@@ -33,4 +39,5 @@
  .step-actions{flex-direction:column-reverse;align-items:stretch}
  .step-actions .button{width:100%;margin-left:0}
  .step-back{text-align:center;margin-right:0}
+ .story-guide{padding:18px 15px 4px;margin-inline:-4px}
 }

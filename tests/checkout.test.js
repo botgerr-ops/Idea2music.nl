@@ -47,20 +47,24 @@ test('every billing field has a matching input and error message in the form',()
  }
  assert.match(page,/factuuradres, eventuele contact- en bedrijfsgegevens/);
 });
-test('three-step checkout retains essential questions and no longer asks what to avoid',()=>{
+test('three-step checkout retains essential questions and adds optional storytelling prompts without changing the API fields',()=>{
  const page=readFileSync(new URL('../bestellen.html',import.meta.url),'utf8');
  const client=readFileSync(new URL('../checkout.js',import.meta.url),'utf8');
  assert.match(page,/id="order-progress"/);
  for(const id of ['recipient','occasion','story','style','mood','language','pronunciation','name','email','billingStreet','billingNumber','billingPostalCode','billingCity','billingCountry']){
   assert.match(page,new RegExp('id="'+id+'"'));
  }
- assert.doesNotMatch(page,/id="avoid"|name="avoid"|Wat mag er juist niet in/);
+ for(const id of ['memory','qualities','perspective','avoidTopics','voicePreference']){
+  assert.match(page,new RegExp('id="'+id+'"'));
+ }
+ assert.match(client,/composeStory\(values\)/);
+ assert.match(client,/for\(const key of storyPromptKeys\)delete values\[key\]/);
  assert.match(client,/const stepDefinitions=/);
  assert.match(client,/showStep\(index\+1\)/);
  assert.match(client,/questions.hidden=true/);
- const validated=validateOrder({...answers,avoid:'Niet in het lied verwerken'});
+ const validated=validateOrder({...answers,avoidTopics:'Niet in het lied verwerken'});
  assert.deepEqual(validated.errors,{});
- assert.equal(Object.hasOwn(validated.values,'avoid'),false);
+ assert.equal(Object.hasOwn(validated.values,'avoidTopics'),false);
 });
 test('checkout is closed unless every activation dependency exists',async()=>{const x=setup();try{delete x.env.RESEND_API_KEY;assert.equal((await (await x.call('config')).json()).enabled,false);assert.equal((await x.start()).status,503);assert.equal(x.created,0);}finally{x.close();}});
 test('rejects cross-origin checkout and client price manipulation',async()=>{const x=setup();try{assert.equal((await x.call('checkout',{method:'POST',origin:'https://evil.test',body:{...x.identity,answers,amountCents:750}})).status,403);assert.equal((await x.call('checkout',{method:'POST',body:{...x.identity,answers,amountCents:1}})).status,409);assert.equal(x.created,0);}finally{x.close();}});

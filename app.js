@@ -3,6 +3,7 @@ function refreshSongPrice() {
   const introductory = Date.now() < introductoryOfferEndsAt;
   document.getElementById('song-price').textContent = introductory ? '€ 7,50' : '€ 15,00';
   document.querySelectorAll('[data-price-copy]').forEach(el => { el.textContent = introductory ? '€ 7,50' : '€ 15,00'; });
+  document.querySelectorAll('[data-cta-price]').forEach(el => { el.textContent = introductory ? '€ 7,50' : '€ 15,00'; });
   document.querySelectorAll('[data-promo-only]').forEach(el => { el.hidden = !introductory; });
   document.getElementById('offer-label').textContent = introductory ? 'Een persoonlijk lied met 50% introductiekorting' : 'Jouw verhaal, persoonlijk op muziek';
   document.getElementById('offer-details').textContent = introductory ? 'T/m 30 november 2026. Vanaf 1 december € 15,00 inclusief btw.' : 'Eén persoonlijk lied met songtekst, digitaal bezorgd.';

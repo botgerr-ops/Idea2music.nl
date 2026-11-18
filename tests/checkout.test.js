@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 import {onRequest} from '../functions/api/[[path]].js';
 import {priceAt,PROMO_END,validateOrder} from '../lib/order-rules.js';
 const originalFetch=globalThis.fetch;
-const answers={name:'Robin Test',email:'customer@example.test',phone:'',billingStreet:'Voorbeeldstraat',billingNumber:'12A',billingPostalCode:'1234 AB',billingCity:'Rotterdam',billingCountry:'Nederland',company:'',vatNumber:'',recipient:'Sam',occasion:'Verjaardag',story:'Een persoonlijk verhaal met voldoende details voor een lied.',style:'Pop',mood:'Vrolijk',language:'Nederlands',pronunciation:'',avoid:'',terms:true,digitalConsent:true};
+const answers={name:'Robin Test',email:'customer@example.test',phone:'',billingStreet:'Voorbeeldstraat',billingNumber:'12A',billingPostalCode:'1234 AB',billingCity:'Rotterdam',billingCountry:'Nederland',company:'',vatNumber:'',recipient:'Sam',occasion:'Verjaardag',story:'Een persoonlijk verhaal met voldoende details voor een lied.',style:'Pop',mood:'Vrolijk',language:'Nederlands',pronunciation:'',terms:true,digitalConsent:true};
 function setup(){
  const db=new DatabaseSync(':memory:');db.exec(readFileSync(new URL('../migrations/0001_orders.sql',import.meta.url),'utf8'));
  const binding={prepare(sql){let params=[];return{bind(...args){params=args;return this;},async first(){return db.prepare(sql).get(...params)||null;},async all(){return{results:db.prepare(sql).all(...params)};},async run(){return db.prepare(sql).run(...params);}};}};
@@ -46,6 +46,21 @@ test('every billing field has a matching input and error message in the form',()
   assert.match(page,new RegExp(`id="${name}-error"`));
  }
  assert.match(page,/factuuradres, eventuele contact- en bedrijfsgegevens/);
+});
+test('three-step checkout retains essential questions and no longer asks what to avoid',()=>{
+ const page=readFileSync(new URL('../bestellen.html',import.meta.url),'utf8');
+ const client=readFileSync(new URL('../checkout.js',import.meta.url),'utf8');
+ assert.match(page,/id="order-progress"/);
+ for(const id of ['recipient','occasion','story','style','mood','language','pronunciation','name','email','billingStreet','billingNumber','billingPostalCode','billingCity','billingCountry']){
+  assert.match(page,new RegExp('id="'+id+'"'));
+ }
+ assert.doesNotMatch(page,/id="avoid"|name="avoid"|Wat mag er juist niet in/);
+ assert.match(client,/const stepDefinitions=/);
+ assert.match(client,/showStep\(index\+1\)/);
+ assert.match(client,/questions.hidden=true/);
+ const validated=validateOrder({...answers,avoid:'Niet in het lied verwerken'});
+ assert.deepEqual(validated.errors,{});
+ assert.equal(Object.hasOwn(validated.values,'avoid'),false);
 });
 test('checkout is closed unless every activation dependency exists',async()=>{const x=setup();try{delete x.env.RESEND_API_KEY;assert.equal((await (await x.call('config')).json()).enabled,false);assert.equal((await x.start()).status,503);assert.equal(x.created,0);}finally{x.close();}});
 test('rejects cross-origin checkout and client price manipulation',async()=>{const x=setup();try{assert.equal((await x.call('checkout',{method:'POST',origin:'https://evil.test',body:{...x.identity,answers,amountCents:750}})).status,403);assert.equal((await x.call('checkout',{method:'POST',body:{...x.identity,answers,amountCents:1}})).status,409);assert.equal(x.created,0);}finally{x.close();}});

@@ -9,3 +9,28 @@
 .field-row{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
 .field-row .field{min-width:0}
 @media(max-width:650px){.field-row{grid-template-columns:1fr;gap:0}}
+
+/* Drie kleine hoofdstukken in plaats van één lange vragenlijst. */
+#form-title{scroll-margin-top:24px}
+.order-progress{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;padding:0;margin:24px 0 13px}
+.order-progress li{display:flex;align-items:center;min-width:0;gap:9px;padding-top:12px;border-top:3px solid var(--line);font-weight:700;font-size:13px;color:var(--muted)}
+.order-progress li[aria-current="step"]{border-top-color:var(--berry);color:var(--ink)}
+.order-progress li.is-complete{border-top-color:#ef6b43;color:var(--ink)}
+.progress-number{display:grid;place-items:center;flex:0 0 28px;height:28px;border:1px solid currentColor;border-radius:50%;font-size:12px;line-height:1}
+.order-progress li[aria-current="step"] .progress-number{color:var(--white);background:var(--berry);border-color:var(--berry)}
+.order-progress li.is-complete .progress-number{color:var(--white);background:#c34e36;border-color:#c34e36}
+.step-context{font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 22px}
+.order-step fieldset:first-child{margin-top:18px}
+.step-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:10px}
+.step-actions .button{min-height:52px;padding:13px 22px;margin-left:auto}
+.step-next{background:var(--berry);color:var(--white);border-radius:var(--control-radius);font-size:15px;font-weight:700}
+.step-next:hover{filter:brightness(1.08)}
+.step-back{margin-right:auto}
+@media(max-width:650px){
+ .order-progress{gap:7px;margin-top:22px}
+ .order-progress li{gap:6px;padding-top:10px;font-size:11px}
+ .progress-number{flex-basis:23px;height:23px;font-size:11px}
+ .step-actions{flex-direction:column-reverse;align-items:stretch}
+ .step-actions .button{width:100%;margin-left:0}
+ .step-back{text-align:center;margin-right:0}
+}

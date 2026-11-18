@@ -32,6 +32,18 @@ test('home has valid organization and website structured data', () => {
   assert.equal(json['@graph'][0].name, 'Idea2Music');
 });
 
+test('homepage uses the current three-step offer and an honest audio preview', () => {
+  const home = read('index.html');
+  const checkout = read('bestellen.html');
+  const script = read('app.js');
+  assert.match(home, /Sommige verhalen verdienen een <em>eigen lied\.<\/em>/);
+  assert.match(home, /Maak jouw lied voor <span data-cta-price>€ 7,50<\/span>/);
+  assert.match(script, /querySelectorAll\('\[data-cta-price\]'\)/);
+  assert.match(home, /Ons introductielied, gemaakt voor ons eigen verhaal/);
+  assert.doesNotMatch(home, /wat je juist niet in het lied wilt/i);
+  assert.match(checkout, /id="order-progress"/);
+});
+
 test('sitemap lists just the canonical indexable pages', () => {
   const xml = read('sitemap.xml');
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);

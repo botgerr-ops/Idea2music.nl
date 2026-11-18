@@ -24,9 +24,9 @@ footer{max-width:1440px;margin:auto;padding:46px 6% 25px}.footer-top{display:fle
 @media(max-width:360px){.brand{font-size:23px}.brand-note{font-size:23px}.button-small{font-size:11px;padding-inline:13px}.announcement-date{display:none}.hero h1{font-size:48px}.hero-actions{gap:14px}.listen-link{font-size:12px}.hero .button{font-size:13px;padding-inline:18px}.hero-price .offer-chip{margin-top:2px}.hero-intro{font-size:16px}.desktop-break{display:none}.gift-art{max-height:300px}.section-heading h2{font-size:37px}.occasion-card h3{font-size:29px}}
 /* Align the first message with the Facebook advert; keep the sound sample
    above the illustration on phones so visitors can listen sooner. */
-.hero h1{font-size:clamp(50px,5.2vw,70px);line-height:1.06}
+.hero h1{font-size:clamp(49px,4.2vw,60px);line-height:1.07}
 .hero-actions #start-order{gap:15px}
-@media(max-width:1050px){.hero h1{font-size:clamp(48px,5.7vw,65px)}}
+@media(max-width:1050px){.hero h1{font-size:clamp(45px,5.1vw,54px)}}
 @media(max-width:760px){.hero h1{font-size:clamp(43px,9vw,64px)}.hero-music{display:flex;flex-direction:column}.music-preview{order:-1;width:100%}.gift-scene{margin-top:23px}}
 @media(max-width:360px){.hero h1{font-size:43px}.hero-actions #start-order{gap:9px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}.button:hover{transform:none}}

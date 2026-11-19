@@ -41,7 +41,7 @@
 .explore-card {display:flex;flex-direction:column;overflow:hidden;border-radius:12px;background:white;border:1px solid #dce3df;transition:transform .2s,box-shadow .2s}
 .explore-card:hover {transform:translateY(-3px);box-shadow:0 15px 26px rgba(19,37,36,.12);color:inherit}
 .explore-card:focus-visible {outline-color:#ff7448}
-.explore-card>img {width:100%;aspect-ratio:1.65;object-fit:cover;display:block}
+.explore-card>img {width:100%;height:225px;aspect-ratio:1.65;object-fit:cover;display:block}
 .explore-caption {padding:19px 21px 22px;display:grid;gap:4px}
 .explore-caption small {font-weight:800;color:#bc562f;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
 .explore-caption strong {font-size:25px;letter-spacing:-.045em;line-height:1.12}
@@ -135,7 +135,7 @@
  .home-section-title .text-link {margin-top:13px}
  .explore-grid {grid-template-columns:1fr;gap:15px}
  .explore-card {display:grid;grid-template-columns:41% 1fr;min-height:140px}
- .explore-card>img {height:100%;aspect-ratio:auto}
+ .explore-card>img {height:155px;aspect-ratio:auto}
  .explore-caption {padding:17px;align-content:center}
  .explore-caption strong {font-size:22px}
  .home-simple {padding:30px 6%}

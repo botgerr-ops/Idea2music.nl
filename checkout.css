@@ -34,3 +34,105 @@
  .step-actions .button{width:100%;margin-left:0}
  .step-back{text-align:center;margin-right:0}
 }
+
+/* Idea2Music checkout refresh: same studio identity as the public pages.
+   Keep questionnaire, payment and consent behavior untouched. */
+:root {
+ --berry:#182f32;
+ --ink:#182b2e;
+ --muted:#576d70;
+ --paper:#f4f5f2;
+ --white:#fff;
+ --coral:#ff7448;
+ --line:#d4dfda;
+ --green:#245154;
+ --control-radius:9px;
+ --display:'DM Sans',Arial,sans-serif;
+ --scroll-track:#f4f5f2;
+ --scroll-thumb:#85a09e;
+ --scroll-hover:#527373;
+}
+body {background:var(--paper)}
+body>header {min-height:91px;padding-block:10px;border-bottom:1px solid #dae4df;max-width:1340px}
+header .header-link {color:#315355;text-decoration:underline;text-underline-offset:5px}
+header .header-link:hover {color:#d7613b}
+body h1,body h2,body h3 {font-family:'DM Sans',Arial,sans-serif;color:#183135;letter-spacing:-.055em}
+body .eyebrow {font-family:'DM Sans',Arial,sans-serif;font-size:12px;letter-spacing:.12em;color:#507176;font-weight:800}
+body h1 em,body h2 em {color:#dc623d;font-style:normal}
+body h1 em:after {display:none}
+body a:focus-visible,body button:focus-visible,body input:focus-visible,body textarea:focus-visible,body summary:focus-visible {outline-color:#e76f48}
+
+/* Wide screens: the story and price stay beside the active form step. */
+.order-page:has(> .order-intro) {max-width:1340px;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);column-gap:5.5%;align-items:start;padding:42px 6% 65px}
+.order-page:has(> .order-intro) .order-intro {grid-column:1;grid-row:1;position:sticky;top:24px;max-width:none;margin:0}
+.order-intro h1 {font-size:clamp(43px,4.4vw,61px);line-height:1.08;margin:0 0 18px;font-weight:800;letter-spacing:-.065em}
+.order-intro>p {color:#52696b;line-height:1.65;font-size:16px}
+.order-intro>p.eyebrow {margin-bottom:17px;font-size:12px}
+.order-intro .delivery-copy {font-size:13px;line-height:1.7;color:#566e70;margin:18px 0 0}
+.order-price {border:0;border-left:4px solid #ff7448;background:#e6eeeb;border-radius:0 11px 11px 0;padding:19px 21px;margin:24px 0 0}
+.order-price strong {color:#193436;font-size:32px;line-height:1.1}
+.order-price span,.order-price p {color:#536f70;font-size:13px}
+.order-price p {margin:5px 0 0}
+.order-intro:after {content:'';display:block;width:100%;height:195px;margin-top:22px;background:#18383c url('assets/photo-process.jpg') center 45%/cover no-repeat;border-radius:12px}
+.order-page:has(> .order-intro) .order-panel {grid-column:2;grid-row:1;margin:0;width:100%;max-width:none}
+.order-page:has(> .order-intro) .order-policies {grid-column:2;grid-row:2;margin-top:22px;max-width:none}
+
+.order-panel {background:#fff;border-color:#d6e1dd;border-radius:14px;padding:30px 32px;box-shadow:0 12px 40px rgba(22,46,46,.035)}
+.order-panel h2 {font-size:32px;line-height:1.18;margin-bottom:8px}
+.order-panel h1 {font-size:clamp(33px,4vw,44px);letter-spacing:-.055em}
+.order-panel .field-hint {font-size:13px;color:#637678;line-height:1.6}
+.order-panel legend {font-size:19px;letter-spacing:-.035em;color:#1b3d40;border-bottom-color:#dae5e0;padding-bottom:13px}
+.order-panel label {font-size:14px;color:#234246}
+.order-panel input:not([type=checkbox]),.order-panel textarea {background:#f7faf8;border-color:#bdcfca;color:#192d30;border-radius:9px;padding:13px 14px}
+.order-panel input:not([type=checkbox]):focus,.order-panel textarea:focus {background:#fff;border-color:#368181}
+.order-panel .notice {background:#eaf1ee;border-left:3px solid #f2764e;color:#315053;border-radius:0 7px 7px 0;margin:19px 0}
+.order-panel .step-context {color:#607779;font-size:14px}
+.order-progress {gap:13px;margin-top:26px}
+.order-progress li {border-top:3px solid #d4dfda;color:#6b8181;font-size:13px}
+.order-progress li[aria-current="step"] {border-top-color:#183a3d;color:#183a3d}
+.order-progress li.is-complete {border-top-color:#ec754d;color:#23474a}
+.order-progress li[aria-current="step"] .progress-number {background:#183a3d;border-color:#183a3d;color:#fff}
+.order-progress li.is-complete .progress-number {background:#e56d48;border-color:#e56d48;color:#fff}
+.order-panel .button {background:#ff7448;color:#183035;border-radius:9px;min-height:53px;font-weight:800;font-size:15px}
+.order-panel .button:hover:not(:disabled) {background:#ff956f;color:#183035}
+.order-panel .button:disabled:hover {background:#ff7448}
+.order-panel .step-next {background:#ff7448;color:#183035}
+.order-panel .text-button {color:#2b6264;text-underline-offset:4px}
+.order-panel .text-button:hover {color:#d35f3b}
+.order-panel .check-label input {accent-color:#1e6769}
+.order-panel .consents a,.order-policies a {color:#235f61}
+.order-panel .checkout-total strong {color:#183a3d}
+.order-policies details {border-color:#d3dfd9}
+.order-policies summary {color:#234c4f;font-size:15px}
+.order-policies details p {color:#4f686b;font-size:14px}
+body>footer:not(:has(.footer-top)) {border-top:1px solid #d9e2de;max-width:1340px}
+body>footer .contact-email {color:#315f61}
+
+/* Confirmation and cancellation retain their own compact layout. */
+.order-page:not(:has(> .order-intro)) {max-width:950px;padding:48px 6% 70px}
+.order-page:not(:has(> .order-intro)) .order-panel {max-width:none}
+
+@media(max-width:920px) {
+ .order-page:has(> .order-intro) {grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);column-gap:4%;padding-inline:4%}
+ .order-page:has(> .order-intro) .order-panel {padding:26px 25px}
+ .order-intro h1 {font-size:clamp(38px,5vw,48px)}
+ .order-intro:after {height:155px}
+}
+@media(max-width:700px) {
+ body>header {min-height:78px;padding:8px 6%;border-bottom:1px solid #d9e3df}
+ header .header-link {font-size:12px}
+ .order-page:has(> .order-intro) {display:block;padding:25px 6% 42px}
+ .order-page:has(> .order-intro) .order-intro {position:static;margin-bottom:22px}
+ .order-intro h1 {font-size:clamp(39px,9vw,51px);margin-bottom:15px}
+ .order-intro>p {font-size:15px}
+ .order-price {padding:14px 17px;margin-top:17px}
+ .order-price strong {font-size:29px}
+ .order-intro .delivery-copy {font-size:13px;margin:12px 0 0}
+ .order-intro:after {display:none}
+ .order-page:has(> .order-intro) .order-panel {padding:24px 21px}
+ .order-page:has(> .order-intro) .order-policies {margin-top:18px}
+ .order-panel h2 {font-size:27px}
+ .order-progress {gap:8px}
+ .order-progress li {font-size:12px}
+ .order-page:not(:has(> .order-intro)) {padding-top:27px}
+}

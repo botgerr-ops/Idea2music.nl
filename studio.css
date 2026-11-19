@@ -1,0 +1,178 @@
+/* Idea2Music: the consumer homepage as a listening studio, not a greeting card.
+   Scoped so the existing live checkout's validated form remains unchanged. */
+.studio-home {
+  --berry: #1b292b;
+  --ink: #182728;
+  --muted: #59696a;
+  --paper: #f4f5f2;
+  --white: #ffffff;
+  --coral: #ff7448;
+  --pink: #d7e8e5;
+  --yellow: #e8eeee;
+  --sage: #e3ebe7;
+  --green: #204347;
+  --line: #d3dcda;
+  --display: 'DM Sans', Arial, sans-serif;
+  --scroll-track: #f4f5f2;
+  --scroll-thumb: #819b9a;
+  --scroll-hover: #49696b;
+  background: var(--paper);
+}
+
+.studio-home h1,
+.studio-home h2,
+.studio-home h3 { font-family: var(--display); font-weight: 800; letter-spacing: -.055em; }
+.studio-home h1 em,
+.studio-home h2 em { color: inherit; font-style: normal; }
+.studio-home h1 em::after { display: none; }
+.studio-home .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .13em; color: #4b6667; }
+.studio-home .announcement { background: #152528; color: #eaf1ed; font-size: 13px; letter-spacing: .015em; }
+.studio-home .announcement-date { color: #a6c6c5; border-color: #52696b; }
+.studio-home header { min-height: 105px; }
+.studio-home header nav { font-size: 14px; }
+.studio-home header nav a:hover { color: #db592f; }
+.studio-home .button { border-radius: 10px; background: #1b292b; color: #fff; font-size: 15px; gap:12px; }
+.studio-home .button:hover { background: #34484a; color:#fff; }
+.studio-home .button .icon,
+.studio-home .text-link .icon { display: none; }
+.studio-home .button-small { min-height: 46px; }
+
+/* Opening thesis: the sound is the hero artwork. */
+.studio-home .hero { padding-top: 56px; padding-bottom: 90px; gap: 6%; grid-template-columns: 1.04fr 1fr; }
+.studio-home .hero-copy { max-width: 640px; }
+.studio-home .hero .eyebrow { margin-bottom: 22px; }
+.studio-home .hero h1 { font-size: clamp(50px, 5.25vw, 82px); line-height: 1.06; letter-spacing: -.068em; margin-bottom: 28px; }
+.studio-home .hero h1 em { color: #df633e; }
+.studio-home .hero-intro { font-size: 21px; line-height: 1.55; margin: 0 0 17px; max-width: 565px; }
+.studio-home .hero-description { font-size: 16px; line-height: 1.75; max-width: 525px; margin-bottom: 30px; }
+.studio-home .hero-actions { gap: 17px; }
+.studio-home .hero-actions #start-order { background: #ff7448; color: #172528; border: 0; min-height: 59px; font-weight: 800; }
+.studio-home .hero-actions #start-order:hover { background: #f38a67; }
+.studio-home .listen-link { font-size: 14px; }
+.studio-home .play-ring { border: 1.5px solid #254245; width: 36px; height: 36px; }
+.studio-home .hero-price { font-size: 13px; margin-top: 26px; }
+.studio-home .hero-price strong { color: #172528; font-size: 29px; }
+.studio-home .offer-chip { font-size: 12px; font-weight: 700; border-color: #a7cbc5; background: #e2eee9; color: #1d484a; }
+.studio-home .offer-details { font-size: 12px; }
+
+.studio-home .hero-music { background: #12262a; color: #f0f6f4; min-height: 536px; padding: 29px; border-radius: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+.studio-art { min-width: 0; }
+.studio-art-top,
+.studio-art-bottom { display: flex; justify-content: space-between; align-items: center; gap: 20px; text-transform: uppercase; letter-spacing: .12em; font-size: 11px; font-weight: 700; color: #98b3b3; }
+.studio-art-title { color: #f6f7f3; font-size: clamp(42px, 4.1vw, 65px); font-family: var(--display); font-weight: 800; letter-spacing: -.07em; line-height: 1.04; margin: 35px 0 8px; }
+.studio-art-title span { color: #ff7448; }
+.studio-art > img { display: block; width: 100%; height: 136px; object-fit: contain; margin: 0; opacity: .96; }
+.studio-art-bottom { border-top: 1px solid #375053; padding-top: 18px; margin: 0 0 25px; }
+.studio-home .music-preview { background: #f8faf7; border: 0; padding: 18px 19px 17px; border-radius: 12px; max-width: none; margin: 0; color: #243538; }
+.studio-home .music-preview .preview-heading { margin-bottom: 11px; }
+.studio-home .music-preview h2 { color: #172c2e; letter-spacing: -.025em; font-size: 17px; }
+.studio-home .music-preview .preview-kicker,
+.studio-home .music-preview .preview-meta { color: #637676; font-size: 12px; }
+.studio-home audio { border-radius: 9px; min-height: 45px; }
+.studio-home audio::-webkit-media-controls-panel { background: #e8efec; }
+.studio-home .album-mark { background: #f5f7f4; }
+
+.studio-home .promise-strip { max-width: none; padding: 23px 6%; gap: 26px; background: #e9efec; border-block: 1px solid #dce4e0; font-size: 13px; font-weight: 600; color: #345255; }
+.studio-home .promise-strip b { color: #e15d39; }
+
+/* The actual waveforms from Robin's music replace the three cartoon drawings. */
+.studio-home .samples.section-wrap { padding-top: 95px; padding-bottom: 104px; }
+.studio-home .samples-intro { align-items: end; gap: 45px; margin-bottom: 38px; }
+.studio-home .samples-intro h2 { font-size: clamp(39px, 4.35vw, 65px); line-height: 1.08; }
+.studio-home .samples-intro-copy p { font-size: 17px; line-height: 1.7; }
+.studio-home .samples-intro-copy span { font-size: 13px; }
+.studio-home .samples-grid { gap: 19px; }
+.studio-home .sample-card { border-radius: 14px; border-color: #d2d9d6; background: #fff; }
+.studio-home .sample-art { display: none; }
+.studio-home .sample-cover { height: 196px; background: #10272c; color: #e3ecea; padding: 20px 22px; display: flex; flex-direction: column; justify-content: space-between; }
+.studio-home .sample-birthday .sample-cover { background: #19383b; }
+.studio-home .sample-memory .sample-cover { background: #203033; }
+.studio-home .sample-cover-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 11px; letter-spacing: .14em; font-weight: 700; color: #b5cfcb; }
+.studio-home .sample-cover > img { display: block; width: 100%; height: 104px; object-fit: contain; }
+.studio-home .sample-cover-bottom { font-size: 10px; letter-spacing: .14em; font-weight: 700; color: #84a6a5; }
+.studio-home .sample-content { padding: 28px 26px 25px; }
+.studio-home .sample-category { font-size: 12px; color: #4d6566; }
+.studio-home .sample-content h3 { font-size: clamp(28px, 2.3vw, 35px); letter-spacing: -.055em; }
+.studio-home .sample-content > p:not(.sample-category) { font-size: 15px; line-height: 1.7; margin-bottom: 25px; }
+.studio-home .sample-content audio { height: 48px; }
+.studio-home .samples-next { background: #dcebe6; border-radius: 12px; padding: 27px 29px; margin-top: 25px; }
+.studio-home .samples-next p { font-size: 16px; }
+.studio-home .samples-next .button { flex: 0 0 auto; background: #173337; color: #fff; }
+
+/* Occasion links are editorial navigation, not three illustrated greeting cards. */
+.studio-home .occasions.section-wrap { padding-top: 45px; padding-bottom: 76px; }
+.studio-home .section-heading h2 { font-size: clamp(42px, 4vw, 61px); }
+.studio-home .occasion-grid { gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.studio-home .occasion-card { border: 0; border-right: 1px solid var(--line); border-radius: 0; background: transparent; padding: 30px 29px 34px; }
+.studio-home .occasion-card:first-child { padding-left: 0; }
+.studio-home .occasion-card:last-child { border-right: 0; padding-right: 0; }
+.studio-home .occasion-art { display: none; }
+.studio-home .occasion-category { font-size: 12px; color: #4c696a; }
+.studio-home .occasion-card h3 { font-size: clamp(25px, 2.5vw, 34px); }
+.studio-home .occasion-card > p:not(.occasion-category) { font-size: 15px; }
+.studio-home .text-link { color: #1b484a; font-size: 14px; }
+.studio-home .occasion-links { margin-top: 28px; }
+.studio-home .occasion-links a { border-radius: 8px; background: transparent; font-size: 13px; }
+.studio-home .occasion-links a:hover { background: #dcebe6; }
+
+.studio-home .how { padding-top: 58px; padding-bottom: 96px; }
+.studio-home .how-title h2 { font-size: clamp(42px, 4vw, 63px); }
+.studio-home .step-number { border: 1px solid #617d7e; color: #1e4e50; font-family: var(--font); font-size: 16px; }
+.studio-home .steps h3 { font-size: 20px; }
+.studio-home .faq { padding-top: 80px; padding-bottom: 99px; }
+.studio-home .faq h2 { font-size: clamp(42px, 4vw, 63px); }
+.studio-home summary { color: #1a383b; font-size: 16px; }
+
+.studio-home .closing { background: #16292c; padding-top: 86px; padding-bottom: 80px; }
+.studio-home .closing-note { display: none; }
+.studio-home .closing .eyebrow { color: #88c6c2; }
+.studio-home .closing h2 { color: #f5f7f3; font-size: clamp(52px, 6vw, 84px); }
+.studio-home .closing .button-light { background: #ff7448; color: #182728; font-weight: 800; }
+.studio-home .closing .button-light:hover { background: #fa9775; color: #182728; }
+.studio-home .closing .closing-price,
+.studio-home .closing .availability { color: #bbd5d3; font-size: 13px; }
+.studio-home .footer-bottom { font-size: 12px; }
+
+@media (max-width: 1050px) {
+  .studio-home .hero { gap: 3%; grid-template-columns: 1fr 1fr; }
+  .studio-home .hero h1 { font-size: clamp(46px, 5.2vw, 60px); }
+  .studio-art-title { font-size: 47px; }
+  .studio-home .hero-music { padding: 23px; min-height: 502px; }
+  .studio-home .sample-content { padding: 23px 19px; }
+}
+@media (max-width: 760px) {
+  .studio-home header { min-height: 82px; }
+  .studio-home .announcement { font-size: 11px; }
+  .studio-home .hero { grid-template-columns: 1fr; gap: 30px; padding-top: 46px; padding-bottom: 60px; }
+  .studio-home .hero h1 { font-size: clamp(44px, 9vw, 68px); }
+  .studio-home .hero-intro { font-size: 18px; }
+  .studio-home .hero-description { font-size: 16px; }
+  .studio-home .hero-music { min-height: 0; width: 100%; max-width: 540px; padding: 21px; border-radius: 15px; }
+  .studio-art-top,
+  .studio-art-bottom { font-size: 9px; letter-spacing: .1em; }
+  .studio-art-title { font-size: clamp(40px, 9vw, 54px); margin: 26px 0 5px; }
+  .studio-art > img { height: 111px; }
+  .studio-art-bottom { margin-bottom: 19px; }
+  .studio-home .music-preview { order: initial; }
+  .studio-home .promise-strip { padding: 18px 6%; font-size: 12px; justify-content: flex-start; }
+  .studio-home .samples.section-wrap { padding-top: 68px; padding-bottom: 64px; }
+  .studio-home .samples-intro { display: block; }
+  .studio-home .samples-intro h2 { font-size: clamp(40px, 8vw, 52px); }
+  .studio-home .sample-cover { height: 184px; }
+  .studio-home .samples-next { padding: 22px; }
+  .studio-home .samples-next .button { width: 100%; }
+  .studio-home .occasions.section-wrap { padding-top: 40px; padding-bottom: 65px; }
+  .studio-home .occasion-grid { grid-template-columns: 1fr; }
+  .studio-home .occasion-card,
+  .studio-home .occasion-card:first-child,
+  .studio-home .occasion-card:last-child { padding: 26px 0 28px; border: 0; border-bottom: 1px solid var(--line); max-width: none; }
+  .studio-home .occasion-card:last-child { border-bottom: 0; }
+  .studio-home .occasion-card h3 { font-size: 30px; }
+  .studio-home .how { padding-top: 35px; padding-bottom: 65px; }
+  .studio-home .faq { padding-top: 60px; padding-bottom: 67px; }
+  .studio-home .closing { padding-top: 65px; padding-bottom: 62px; }
+  .studio-home .closing h2 { font-size: clamp(49px, 10vw, 64px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-home .button:hover { transform: none; }
+}

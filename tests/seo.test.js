@@ -63,6 +63,21 @@ test('the three public listening samples use real, locally hosted audio files', 
   }
 });
 
+test('homepage presents the recordings as a studio rather than illustrated gifts', () => {
+  const home = read('index.html');
+  const css = read('studio.css');
+  assert.match(home, /<body class="studio-home">/);
+  assert.match(home, /<link rel="stylesheet" href="studio\.css">/);
+  assert.doesNotMatch(home, /src="assets\/music-gift\.svg"/);
+  assert.match(css, /\.studio-home \.occasion-art \{ display: none; \}/);
+  assert.match(css, /\.studio-home \.sample-art \{ display: none; \}/);
+  for (const name of ['intro', 'train', 'birthday', 'memory']) {
+    const asset = `wave-${name}.svg`;
+    assert.match(home, new RegExp(`src="assets/${asset}"`));
+    assert.ok(statSync(new URL(`../assets/${asset}`, import.meta.url)).size > 1_000, asset);
+  }
+});
+
 test('sitemap lists just the canonical indexable pages', () => {
   const xml = read('sitemap.xml');
   const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);

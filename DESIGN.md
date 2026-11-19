@@ -38,6 +38,10 @@ components:
 ---
 # Idea2Music design
 
+## Homepage visual revision — 19 November 2026
+
+Robin rejected the illustrated gift-card and cartoon-demo treatment as too childish. The production homepage now has a restrained, music-studio-led presentation while retaining the approved I2M logo and all existing ordering behavior. `studio.css` is loaded on `index.html` only: deep teal ink (#12262a), cool paper (#f4f5f2), self-hosted DM Sans, orange sound accent (#ff7448) and crisp editorial panels. The hero uses an audio waveform generated from the real Idea2Music introduction track; the three demo covers use real waveforms generated from the approved 45-second MP3 excerpts. No fictional customers, AI-generated images, stock illustrations, or new services are introduced. Cartoon-style occasion art is hidden on the homepage. Checkout styles and the server code are deliberately untouched. Regenerate waveform assets with `node scripts/generate-waveforms.mjs` when replacing audio files.
+
 ## Overview
 Robin approved an independent, warm gift-and-music identity on 16 November 2026 after finding the navy/lilac site too similar to NarrowVision. This deliberately replaces that visual identity across the landing page and questionnaire. Audience: Dutch consumers, primarily on phones. The job is choosing a thoughtful music gift, listening and starting the existing questionnaire.
 

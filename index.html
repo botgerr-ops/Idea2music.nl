@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Geef jullie verhaal een eigen lied. Een persoonlijk muziekcadeau, inclusief songtekst. Vertel jouw verhaal, kies de stijl en laat je verrassen door Idea2Music.">
-  <meta name="theme-color" content="#fff5e6">
+  <meta name="theme-color" content="#f4f5f2">
   <title>Idea2Music — Geef jullie verhaal een eigen lied</title>
   <link rel="canonical" href="https://www.idea2music.nl/">
   <meta property="og:type" content="website">
@@ -41,6 +41,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/display.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="studio.css">
   <link rel="stylesheet" href="tracking.css">
   <script src="tracking.js" defer></script>
   <script src="app.js" defer></script>
@@ -48,7 +49,7 @@
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"6d65417cee0e4d19b094433aa18c0d93"}'></script>
   <!-- End Cloudflare Web Analytics -->
 </head>
-<body>
+<body class="studio-home">
 <a class="skip-link" href="#inhoud">Direct naar de inhoud</a>
 <div class="announcement"><span id="offer-label">Een persoonlijk lied met 50% introductiekorting</span><span class="announcement-date" data-promo-only>t/m 30 november</span></div>
 <header class="site-header">
@@ -59,7 +60,7 @@
 <main id="inhoud">
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow"><span class="tiny-note" aria-hidden="true">♪</span> Een cadeau dat alleen jij kunt geven</p>
+    <p class="eyebrow">Persoonlijke muziek, op maat gemaakt</p>
     <h1 id="hero-title">Sommige verhalen verdienen een <em>eigen lied.</em></h1>
     <p class="hero-intro">Een verjaardag, een grote liefde of gewoon een bijzonder mens. Maak er een herinnering van die je kunt afspelen.</p>
     <p class="hero-description">Jij vertelt het verhaal en kiest de muziekstijl. Wij maken jouw persoonlijke lied en songtekst, met de namen en kleine momenten die het écht van jullie maken.</p>
@@ -68,10 +69,11 @@
     <p class="offer-details" id="offer-details">T/m 30 november 2026. Vanaf 1 december € 15,00 inclusief btw.</p>
   </div>
   <div class="hero-music">
-    <div class="gift-scene">
-      <span class="little-spark spark-one" aria-hidden="true">✦</span><span class="little-spark spark-two" aria-hidden="true">✦</span>
-      <img class="gift-art" src="assets/music-gift.svg" width="640" height="560" alt="Een rode cadeau-envelop met een persoonlijke muziekkaart en een plaat als symbool voor jouw digitale lied">
-      <span class="gift-caption">Geen standaard cadeau. Wel jullie verhaal.</span>
+    <div class="studio-art" aria-hidden="true">
+      <div class="studio-art-top"><span>IDEA2MUSIC / STUDIO</span><span>PERSONAL SOUNDTRACKS</span></div>
+      <p class="studio-art-title">Jouw woorden.<br><span>Jouw sound.</span></p>
+      <img src="assets/wave-intro.svg" width="735" height="160" alt="" fetchpriority="low">
+      <div class="studio-art-bottom"><span>Van eerste herinnering tot laatste noot</span><span>MADE PERSONAL</span></div>
     </div>
     <div class="music-preview" id="luistervoorbeeld">
       <div class="preview-heading"><span class="album-mark" aria-hidden="true"><img src="assets/i2m-logo.png" width="1448" height="1086" alt=""></span><div><p class="preview-kicker">Luister vóór je bestelt</p><h2>Zo klinkt Idea2Music</h2><p class="preview-meta">Ons introductielied, gemaakt voor ons eigen verhaal.</p></div></div>
@@ -88,14 +90,17 @@
   </div>
   <div class="samples-grid">
     <article class="sample-card sample-train">
+      <div class="sample-cover" aria-hidden="true"><div class="sample-cover-top"><span>I2M / AUDIO DEMO</span><span>00:45</span></div><img src="assets/wave-train.svg" width="735" height="160" alt="" loading="lazy"><span class="sample-cover-bottom">ORIGINAL IDEA2MUSIC SESSION</span></div>
       <div class="sample-art" aria-hidden="true"><svg viewBox="0 0 320 190" role="presentation"><circle cx="239" cy="48" r="28" fill="#f5b98e"/><path d="M5 166c51-34 99-34 151-9s98 27 159-9" stroke="#f5b98e" stroke-width="2" fill="none" opacity=".5"/><path d="M102 149V68c0-15 12-27 27-27h63c15 0 27 12 27 27v81" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M118 74h84v36h-84z" fill="currentColor" opacity=".15"/><path d="M118 74h84v36h-84" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="125" cy="132" r="7" fill="currentColor"/><circle cx="196" cy="132" r="7" fill="currentColor"/><path d="m120 154-16 26m95-26 16 26m-97-14h86m-92 10h97" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg><span class="sample-art-label">Een verhaal om te voelen</span></div>
       <div class="sample-content"><p class="sample-category">Afscheid & loslaten</p><h3>De laatste trein</h3><p>Een lied over dat ene moment waarop woorden meer betekenen dan ooit.</p><audio controls preload="none" aria-label="45 seconden luisterfragment: De laatste trein"><source src="assets/de-laatste-trein-fragment.mp3" type="audio/mpeg">Je browser ondersteunt geen audio. <a href="assets/de-laatste-trein-fragment.mp3">Beluister De laatste trein</a>.</audio></div>
     </article>
     <article class="sample-card sample-birthday">
+      <div class="sample-cover" aria-hidden="true"><div class="sample-cover-top"><span>I2M / AUDIO DEMO</span><span>00:45</span></div><img src="assets/wave-birthday.svg" width="735" height="160" alt="" loading="lazy"><span class="sample-cover-bottom">ORIGINAL IDEA2MUSIC SESSION</span></div>
       <div class="sample-art" aria-hidden="true"><svg viewBox="0 0 320 190" role="presentation"><path d="M52 50l12 14m198-17-13 16M105 24l-7 19m128-18 7 19" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="61" cy="103" r="6" fill="#e9544b"/><circle cx="269" cy="121" r="7" fill="#e9544b"/><path d="M83 153h154v-53H83z" fill="#fff5e6" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M83 113q20 21 39 0 19 21 38 0 19 21 38 0 19 21 39 0" fill="none" stroke="#e9544b" stroke-width="6"/><path d="M125 97V69m35 28V69m35 28V69" stroke="currentColor" stroke-width="6"/><path d="M125 64q-13-11 0-26q13 15 0 26m35 0q-13-11 0-26q13 15 0 26m35 0q-13-11 0-26q13 15 0 26" fill="#e9544b"/><path d="M73 168h174" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg><span class="sample-art-label">Een moment om te vieren</span></div>
       <div class="sample-content"><p class="sample-category">Verjaardag & vieren</p><h3>Vandaag is van jou</h3><p>Een muzikaal cadeau waarmee iemand écht even in het middelpunt staat.</p><audio controls preload="none" aria-label="45 seconden luisterfragment: Vandaag is van jou"><source src="assets/vandaag-is-van-jou-fragment.mp3" type="audio/mpeg">Je browser ondersteunt geen audio. <a href="assets/vandaag-is-van-jou-fragment.mp3">Beluister Vandaag is van jou</a>.</audio></div>
     </article>
     <article class="sample-card sample-memory">
+      <div class="sample-cover" aria-hidden="true"><div class="sample-cover-top"><span>I2M / AUDIO DEMO</span><span>00:45</span></div><img src="assets/wave-memory.svg" width="735" height="160" alt="" loading="lazy"><span class="sample-cover-bottom">ORIGINAL IDEA2MUSIC SESSION</span></div>
       <div class="sample-art" aria-hidden="true"><svg viewBox="0 0 320 190" role="presentation"><circle cx="160" cy="96" r="67" stroke="currentColor" stroke-width="3" fill="none" opacity=".2"/><circle cx="160" cy="96" r="49" stroke="currentColor" stroke-width="3" fill="none" opacity=".35"/><circle cx="160" cy="96" r="29" stroke="currentColor" stroke-width="3" fill="none" opacity=".6"/><path d="M158 108V67l31-7v39" stroke="currentColor" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" fill="none"/><ellipse cx="148" cy="111" rx="13" ry="9" fill="currentColor" transform="rotate(-20 148 111)"/><ellipse cx="179" cy="102" rx="13" ry="9" fill="currentColor" transform="rotate(-20 179 102)"/><path d="m73 51 5-13 5 13 13 5-13 5-5 13-5-13-13-5zm178 82 4-9 4 9 9 4-9 4-4 9-4-9-9-4z" fill="#e9544b"/></svg><span class="sample-art-label">Een herinnering om te bewaren</span></div>
       <div class="sample-content"><p class="sample-category">Herinnering & gemis</p><h3>Ik hoor je nog</h3><p>Voor een stem, een gevoel of een herinnering die altijd bij je blijft.</p><audio controls preload="none" aria-label="45 seconden luisterfragment: Ik hoor je nog"><source src="assets/ik-hoor-je-nog-fragment.mp3" type="audio/mpeg">Je browser ondersteunt geen audio. <a href="assets/ik-hoor-je-nog-fragment.mp3">Beluister Ik hoor je nog</a>.</audio></div>
     </article>

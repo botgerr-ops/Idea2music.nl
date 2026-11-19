@@ -5,6 +5,8 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 const read = file => readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 const pages = [
   ['index.html', 'https://www.idea2music.nl/'],
+  ['voorbeelden.html', 'https://www.idea2music.nl/voorbeelden'],
+  ['zo-werkt-het.html', 'https://www.idea2music.nl/zo-werkt-het'],
   ['persoonlijk-lied-laten-maken.html', 'https://www.idea2music.nl/persoonlijk-lied-laten-maken'],
   ['verjaardagslied-laten-maken.html', 'https://www.idea2music.nl/verjaardagslied-laten-maken'],
   ['liefdeslied-laten-maken.html', 'https://www.idea2music.nl/liefdeslied-laten-maken']
@@ -32,7 +34,7 @@ test('home has valid organization and website structured data', () => {
   assert.equal(json['@graph'][0].name, 'Idea2Music');
 });
 
-test('homepage uses the current three-step offer and an honest audio preview', () => {
+test('homepage uses the current offer and an honest audio preview', () => {
   const home = read('index.html');
   const checkout = read('bestellen.html');
   const script = read('app.js');
@@ -46,35 +48,39 @@ test('homepage uses the current three-step offer and an honest audio preview', (
 
 test('the three public listening samples use real, locally hosted audio files', () => {
   const home = read('index.html');
-  assert.match(home, /id="voorbeelden"/);
+  const examples = read('voorbeelden.html');
+  assert.match(home, /href="voorbeelden\.html"/);
   for (const [title, file] of [
     ['De laatste trein', 'de-laatste-trein-fragment.mp3'],
     ['Vandaag is van jou', 'vandaag-is-van-jou-fragment.mp3'],
     ['Ik hoor je nog', 'ik-hoor-je-nog-fragment.mp3']
   ]) {
-    assert.ok(home.includes(`<h3>${title}</h3>`), title);
-    assert.ok(home.includes(`<source src="assets/${file}" type="audio/mpeg">`), file);
+    assert.ok(examples.includes(`<h2>${title}</h2>`), title);
+    assert.ok(examples.includes(`<source src="assets/${file}" type="audio/mpeg">`), file);
     const size = statSync(new URL(`../assets/${file}`, import.meta.url)).size;
     assert.ok(size > 100_000 && size < 1_500_000, `${file} should be a short excerpt`);
   }
-  assert.match(home, /Drie luisterfragmenten van 45 seconden · muziek en zang gemaakt met AI/);
+  assert.match(examples, /luisterfragmenten van 45 seconden · muziek en zang gemaakt met AI/);
   for (const fullFile of ['de-laatste-trein.mp3', 'vandaag-is-van-jou.mp3', 'ik-hoor-je-nog.mp3']) {
     assert.equal(existsSync(new URL(`../assets/${fullFile}`, import.meta.url)), false, `${fullFile} must stay private`);
   }
 });
 
-test('homepage presents the recordings as a studio rather than illustrated gifts', () => {
+test('homepage is short and links to dedicated listening and explanation pages', () => {
   const home = read('index.html');
   const css = read('studio.css');
-  assert.match(home, /<body class="studio-home">/);
+  assert.match(home, /<body class="studio-home/);
   assert.match(home, /<link rel="stylesheet" href="studio\.css">/);
   assert.doesNotMatch(home, /src="assets\/music-gift\.svg"/);
-  assert.match(css, /\.studio-home \.occasion-art \{ display: none; \}/);
-  assert.match(css, /\.studio-home \.sample-art \{ display: none; \}/);
-  for (const name of ['intro', 'train', 'birthday', 'memory']) {
-    const asset = `wave-${name}.svg`;
-    assert.match(home, new RegExp(`src="assets/${asset}"`));
-    assert.ok(statSync(new URL(`../assets/${asset}`, import.meta.url)).size > 1_000, asset);
+  assert.match(css, /\.studio-home/);
+  assert.ok(home.length < 11_000, 'Homepage should no longer be a giant landing page');
+  for (const target of ['voorbeelden.html', 'zo-werkt-het.html', 'bestellen.html']) {
+    assert.ok(home.includes(`href="${target}"`), target);
+  }
+  for (const name of ['studio', 'process', 'train', 'birthday', 'memory']) {
+    const asset = `photo-${name}.jpg`;
+    assert.ok(statSync(new URL(`../assets/${asset}`, import.meta.url)).size > 20_000, asset);
+    assert.match(home + read('voorbeelden.html') + read('zo-werkt-het.html'), new RegExp(`assets/${asset}`));
   }
 });
 

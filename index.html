@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Geef jullie verhaal een eigen lied. Een persoonlijk muziekcadeau, inclusief songtekst. Vertel jouw verhaal, kies de stijl en laat je verrassen door Idea2Music.">
+  <meta name="description" content="Jouw verhaal, een eigen lied. Luister naar echte voorbeelden en laat een persoonlijk lied met songtekst maken bij Idea2Music.">
   <meta name="theme-color" content="#f4f5f2">
   <title>Idea2Music — Geef jullie verhaal een eigen lied</title>
   <link rel="canonical" href="https://www.idea2music.nl/">
@@ -11,7 +11,7 @@
   <meta property="og:locale" content="nl_NL">
   <meta property="og:site_name" content="Idea2Music">
   <meta property="og:title" content="Idea2Music — Jullie verhaal. Een eigen lied.">
-  <meta property="og:description" content="Jij het idee. Wij de muziek. Laat een persoonlijk lied maken van jullie herinneringen, inclusief songtekst.">
+  <meta property="og:description" content="Jij het idee. Wij de muziek. Luister naar voorbeelden en maak een persoonlijk lied, inclusief songtekst.">
   <meta property="og:url" content="https://www.idea2music.nl/">
   <meta property="og:image" content="https://www.idea2music.nl/assets/i2m-logo.png">
   <meta property="og:image:alt" content="I2M — Jij het idee. Wij de muziek.">
@@ -20,21 +20,8 @@
   {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://www.idea2music.nl/#organization",
-        "name": "Idea2Music",
-        "url": "https://www.idea2music.nl/",
-        "logo": "https://www.idea2music.nl/assets/i2m-logo.png"
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://www.idea2music.nl/#website",
-        "name": "Idea2Music",
-        "url": "https://www.idea2music.nl/",
-        "inLanguage": "nl-NL",
-        "publisher": { "@id": "https://www.idea2music.nl/#organization" }
-      }
+      {"@type":"Organization","@id":"https://www.idea2music.nl/#organization","name":"Idea2Music","url":"https://www.idea2music.nl/","logo":"https://www.idea2music.nl/assets/i2m-logo.png"},
+      {"@type":"WebSite","@id":"https://www.idea2music.nl/#website","name":"Idea2Music","url":"https://www.idea2music.nl/","inLanguage":"nl-NL","publisher":{"@id":"https://www.idea2music.nl/#organization"}}
     ]
   }
   </script>
@@ -42,109 +29,74 @@
   <link rel="preload" href="assets/display.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="multipage.css">
   <link rel="stylesheet" href="tracking.css">
   <script src="tracking.js" defer></script>
   <script src="app.js" defer></script>
-<!-- Cloudflare Web Analytics -->
+  <!-- Cloudflare Web Analytics -->
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"6d65417cee0e4d19b094433aa18c0d93"}'></script>
-  <!-- End Cloudflare Web Analytics -->
 </head>
-<body class="studio-home">
+<body class="studio-home site-reworked">
 <a class="skip-link" href="#inhoud">Direct naar de inhoud</a>
 <div class="announcement"><span id="offer-label">Een persoonlijk lied met 50% introductiekorting</span><span class="announcement-date" data-promo-only>t/m 30 november</span></div>
 <header class="site-header">
   <a class="brand brand-mark" href="/" aria-label="Idea2Music — naar de homepage"><img src="assets/i2m-logo.png" width="1448" height="1086" alt=""><span class="brand-tagline">Jij het idee. Wij de muziek.</span></a>
-  <nav aria-label="Hoofdnavigatie"><a href="#voorbeelden">Luistervoorbeelden</a><a href="#werkwijze">Zo werkt het</a></nav>
-  <a class="button button-small" data-order-link href="#bestellen">Maak jouw lied <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <nav aria-label="Hoofdnavigatie"><a href="/" aria-current="page">Home</a><a href="voorbeelden.html">Luistervoorbeelden</a><a href="zo-werkt-het.html">Zo werkt het</a></nav>
+  <a class="button button-small" data-order-link href="bestellen.html">Maak jouw lied</a>
 </header>
 <main id="inhoud">
-<section class="hero" aria-labelledby="hero-title">
-  <div class="hero-copy">
-    <p class="eyebrow">Persoonlijke muziek, op maat gemaakt</p>
-    <h1 id="hero-title">Sommige verhalen verdienen een <em>eigen lied.</em></h1>
-    <p class="hero-intro">Een verjaardag, een grote liefde of gewoon een bijzonder mens. Maak er een herinnering van die je kunt afspelen.</p>
-    <p class="hero-description">Jij vertelt het verhaal en kiest de muziekstijl. Wij maken jouw persoonlijke lied en songtekst, met de namen en kleine momenten die het écht van jullie maken.</p>
-    <div class="hero-actions"><a class="button" id="start-order" data-order-link href="#bestellen"><span>Maak jouw lied voor <span data-cta-price>€ 7,50</span></span><svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a class="listen-link" href="#voorbeelden"><span class="play-ring" aria-hidden="true"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="m8 5 11 7-11 7Z" fill="currentColor"/></svg></span> Beluister drie voorbeelden</a></div>
-    <div class="hero-price"><strong id="song-price">€ 7,50</strong><span>inclusief btw <span class="price-divider" aria-hidden="true">/</span> lied + songtekst</span><span class="offer-chip" data-promo-only>50% introductiekorting</span></div>
-    <p class="offer-details" id="offer-details">T/m 30 november 2026. Vanaf 1 december € 15,00 inclusief btw.</p>
-  </div>
-  <div class="hero-music">
-    <div class="studio-art" aria-hidden="true">
-      <div class="studio-art-top"><span>IDEA2MUSIC / STUDIO</span><span>PERSONAL SOUNDTRACKS</span></div>
-      <p class="studio-art-title">Jouw woorden.<br><span>Jouw sound.</span></p>
-      <img src="assets/wave-intro.svg" width="735" height="160" alt="" fetchpriority="low">
-      <div class="studio-art-bottom"><span>Van eerste herinnering tot laatste noot</span><span>MADE PERSONAL</span></div>
+  <section class="compact-hero" aria-labelledby="hero-title">
+    <div class="compact-hero-copy">
+      <p class="eyebrow">Persoonlijke muziek met betekenis</p>
+      <h1 id="hero-title">Sommige verhalen verdienen een <em>eigen lied.</em></h1>
+      <p class="hero-intro">Van een bijzondere verjaardag tot een herinnering die je nooit wilt vergeten. Jouw verhaal wordt een lied dat écht iets zegt.</p>
+      <p class="hero-description">Jij vertelt het verhaal en kiest de muziekstijl. Wij maken het lied en de songtekst persoonlijk voor jou.</p>
+      <div class="hero-actions">
+        <a class="button" id="start-order" data-order-link href="bestellen.html"><span>Maak jouw lied voor <span data-cta-price>€ 7,50</span></span></a>
+        <a class="listen-link" href="voorbeelden.html"><span class="play-ring" aria-hidden="true">▶</span> Eerst voorbeelden luisteren</a>
+      </div>
+      <div class="hero-price"><strong id="song-price">€ 7,50</strong><span>inclusief btw / lied + songtekst</span><span class="offer-chip" data-promo-only>50% introductiekorting</span></div>
+      <p class="offer-details" id="offer-details">T/m 30 november 2026. Vanaf 1 december € 15,00 inclusief btw.</p>
     </div>
-    <div class="music-preview" id="luistervoorbeeld">
-      <div class="preview-heading"><span class="album-mark" aria-hidden="true"><img src="assets/i2m-logo.png" width="1448" height="1086" alt=""></span><div><p class="preview-kicker">Luister vóór je bestelt</p><h2>Zo klinkt Idea2Music</h2><p class="preview-meta">Ons introductielied, gemaakt voor ons eigen verhaal.</p></div></div>
-      <audio controls preload="none" aria-label="Luister naar het Idea2Music-lied"><source src="assets/idea2music.mp3" type="audio/mpeg">Je browser kan dit lied niet afspelen. <a href="assets/idea2music.mp3">Open het lied</a>.</audio>
-      <p class="audio-feedback" role="status" hidden>Afspelen lukt nu niet. <a href="assets/idea2music.mp3">Open het lied rechtstreeks</a>.</p>
+    <div class="hero-visual">
+      <figure class="hero-photo">
+        <img src="assets/photo-studio.jpg" width="1200" height="711" alt="Sfeerbeeld van een artiest die met koptelefoon in een microfoon zingt" fetchpriority="high">
+        <figcaption>Elk verhaal verdient zijn eigen geluid.</figcaption>
+      </figure>
+      <div class="music-preview" id="luistervoorbeeld">
+        <div class="preview-heading"><span class="album-mark" aria-hidden="true"><img src="assets/i2m-logo.png" width="1448" height="1086" alt=""></span><div><p class="preview-kicker">Druk op play</p><h2>Zo klinkt Idea2Music</h2><p class="preview-meta">Ons introductielied, gemaakt voor ons eigen verhaal.</p></div></div>
+        <audio controls preload="metadata" aria-label="Luister naar het Idea2Music-lied"><source src="assets/idea2music.mp3" type="audio/mpeg">Je browser kan dit lied niet afspelen. <a href="assets/idea2music.mp3">Open het lied</a>.</audio>
+        <p class="audio-feedback" role="status" hidden>Afspelen lukt nu niet. <a href="assets/idea2music.mp3">Open het lied rechtstreeks</a>.</p>
+      </div>
     </div>
-  </div>
-</section>
-<div class="promise-strip" aria-label="Wat je krijgt"><span><b aria-hidden="true">♪</b> Jouw verhaal, jouw muziekstijl</span><span><svg class="icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m4 6 8 7 8-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg> Lied én songtekst digitaal</span><span><b aria-hidden="true">♡</b> Persoonlijk samengesteld en gecontroleerd</span></div>
-<section class="samples section-wrap" id="voorbeelden" aria-labelledby="samples-title">
-  <div class="samples-intro">
-    <div><p class="eyebrow">Hoor wat een verhaal kan worden</p><h2 id="samples-title">Drie verhalen.<br><em>Drie verschillende liedjes.</em></h2></div>
-    <div class="samples-intro-copy"><p>Van een bijzondere verjaardag tot afscheid en herinneringen. Luister hoe verschillend persoonlijke muziek kan klinken.</p><span>Drie luisterfragmenten van 45 seconden · muziek en zang gemaakt met AI</span></div>
-  </div>
-  <div class="samples-grid">
-    <article class="sample-card sample-train">
-      <div class="sample-cover" aria-hidden="true"><div class="sample-cover-top"><span>I2M / AUDIO DEMO</span><span>00:45</span></div><img src="assets/wave-train.svg" width="735" height="160" alt="" loading="lazy"><span class="sample-cover-bottom">ORIGINAL IDEA2MUSIC SESSION</span></div>
-      <div class="sample-art" aria-hidden="true"><svg viewBox="0 0 320 190" role="presentation"><circle cx="239" cy="48" r="28" fill="#f5b98e"/><path d="M5 166c51-34 99-34 151-9s98 27 159-9" stroke="#f5b98e" stroke-width="2" fill="none" opacity=".5"/><path d="M102 149V68c0-15 12-27 27-27h63c15 0 27 12 27 27v81" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M118 74h84v36h-84z" fill="currentColor" opacity=".15"/><path d="M118 74h84v36h-84" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="125" cy="132" r="7" fill="currentColor"/><circle cx="196" cy="132" r="7" fill="currentColor"/><path d="m120 154-16 26m95-26 16 26m-97-14h86m-92 10h97" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg><span class="sample-art-label">Een verhaal om te voelen</span></div>
-      <div class="sample-content"><p class="sample-category">Afscheid & loslaten</p><h3>De laatste trein</h3><p>Een lied over dat ene moment waarop woorden meer betekenen dan ooit.</p><audio controls preload="none" aria-label="45 seconden luisterfragment: De laatste trein"><source src="assets/de-laatste-trein-fragment.mp3" type="audio/mpeg">Je browser ondersteunt geen audio. <a href="assets/de-laatste-trein-fragment.mp3">Beluister De laatste trein</a>.</audio></div>
-    </article>
-    <article class="sample-card sample-birthday">
-      <div class="sample-cover" aria-hidden="true"><div class="sample-cover-top"><span>I2M / AUDIO DEMO</span><span>00:45</span></div><img src="assets/wave-birthday.svg" width="735" height="160" alt="" loading="lazy"><span class="sample-cover-bottom">ORIGINAL IDEA2MUSIC SESSION</span></div>
-      <div class="sample-art" aria-hidden="true"><svg viewBox="0 0 320 190" role="presentation"><path d="M52 50l12 14m198-17-13 16M105 24l-7 19m128-18 7 19" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="61" cy="103" r="6" fill="#e9544b"/><circle cx="269" cy="121" r="7" fill="#e9544b"/><path d="M83 153h154v-53H83z" fill="#fff5e6" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M83 113q20 21 39 0 19 21 38 0 19 21 38 0 19 21 39 0" fill="none" stroke="#e9544b" stroke-width="6"/><path d="M125 97V69m35 28V69m35 28V69" stroke="currentColor" stroke-width="6"/><path d="M125 64q-13-11 0-26q13 15 0 26m35 0q-13-11 0-26q13 15 0 26m35 0q-13-11 0-26q13 15 0 26" fill="#e9544b"/><path d="M73 168h174" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg><span class="sample-art-label">Een moment om te vieren</span></div>
-      <div class="sample-content"><p class="sample-category">Verjaardag & vieren</p><h3>Vandaag is van jou</h3><p>Een muzikaal cadeau waarmee iemand écht even in het middelpunt staat.</p><audio controls preload="none" aria-label="45 seconden luisterfragment: Vandaag is van jou"><source src="assets/vandaag-is-van-jou-fragment.mp3" type="audio/mpeg">Je browser ondersteunt geen audio. <a href="assets/vandaag-is-van-jou-fragment.mp3">Beluister Vandaag is van jou</a>.</audio></div>
-    </article>
-    <article class="sample-card sample-memory">
-      <div class="sample-cover" aria-hidden="true"><div class="sample-cover-top"><span>I2M / AUDIO DEMO</span><span>00:45</span></div><img src="assets/wave-memory.svg" width="735" height="160" alt="" loading="lazy"><span class="sample-cover-bottom">ORIGINAL IDEA2MUSIC SESSION</span></div>
-      <div class="sample-art" aria-hidden="true"><svg viewBox="0 0 320 190" role="presentation"><circle cx="160" cy="96" r="67" stroke="currentColor" stroke-width="3" fill="none" opacity=".2"/><circle cx="160" cy="96" r="49" stroke="currentColor" stroke-width="3" fill="none" opacity=".35"/><circle cx="160" cy="96" r="29" stroke="currentColor" stroke-width="3" fill="none" opacity=".6"/><path d="M158 108V67l31-7v39" stroke="currentColor" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" fill="none"/><ellipse cx="148" cy="111" rx="13" ry="9" fill="currentColor" transform="rotate(-20 148 111)"/><ellipse cx="179" cy="102" rx="13" ry="9" fill="currentColor" transform="rotate(-20 179 102)"/><path d="m73 51 5-13 5 13 13 5-13 5-5 13-5-13-13-5zm178 82 4-9 4 9 9 4-9 4-4 9-4-9-9-4z" fill="#e9544b"/></svg><span class="sample-art-label">Een herinnering om te bewaren</span></div>
-      <div class="sample-content"><p class="sample-category">Herinnering & gemis</p><h3>Ik hoor je nog</h3><p>Voor een stem, een gevoel of een herinnering die altijd bij je blijft.</p><audio controls preload="none" aria-label="45 seconden luisterfragment: Ik hoor je nog"><source src="assets/ik-hoor-je-nog-fragment.mp3" type="audio/mpeg">Je browser ondersteunt geen audio. <a href="assets/ik-hoor-je-nog-fragment.mp3">Beluister Ik hoor je nog</a>.</audio></div>
-    </article>
-  </div>
-  <div class="samples-next"><p>Dit zijn voorbeelden. Jouw lied schrijven en maken we rond <strong>jouw eigen verhaal</strong>, stijl en herinneringen.</p><a class="button" data-order-link href="bestellen.html">Maak jouw persoonlijke lied</a></div>
-</section>
-<section class="occasions section-wrap" aria-labelledby="occasion-title">
-  <div class="section-heading"><div><p class="eyebrow">Een klein verhaal. Een groot gebaar.</p><h2 id="occasion-title">Voor alles wat je<br><em>wilt zeggen.</em></h2></div><p>Een bedankje dat blijft hangen.<br>Een herinnering die je kunt horen.<br>Of een liefdesverklaring met een refrein.</p></div>
-  <div class="occasion-grid">
-    <article class="occasion-card love"><div class="occasion-art" aria-hidden="true"><svg viewBox="0 0 280 180"><path d="M140 145C-2 68 86 5 140 63C194 5 282 68 140 145Z" fill="currentColor"/><path d="m196 45 28-12m-12 36 31-2M68 39 47 23" stroke="currentColor" fill="none" stroke-width="5" stroke-linecap="round"/></svg><span>voor jou, liefs.</span></div><p class="occasion-category">Liefde & samen</p><h3>Jullie hebben<br>een eigen verhaal.</h3><p>Van jullie eerste ontmoeting tot alle kleine dingen daarna. Geef het een eigen soundtrack.</p><a class="text-link" data-order-link href="#bestellen">Maak het persoonlijk <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></article>
-    <article class="occasion-card birthday"><div class="occasion-art" aria-hidden="true"><svg viewBox="0 0 280 180"><path d="M75 145h130v-49H75z" fill="currentColor"/><path d="M75 110q16 25 32 0q16 25 32 0q16 25 32 0q16 25 34 0" stroke="#ffc95c" fill="none" stroke-width="6"/><path d="M110 93V65m30 28V62m30 31V65" stroke="currentColor" stroke-width="8"/><path d="M110 58q-14-12 0-25q14 13 0 25m30-3q-14-12 0-25q14 13 0 25m30 3q-14-12 0-25q14 13 0 25" fill="currentColor"/></svg><span>lang zal je zingen.</span></div><p class="occasion-category">Verjaardag & feest</p><h3>Dit jaar zit er<br>een lied bij.</h3><p>Die legendarische grap, bijzondere hobby of mooie herinnering. Helemaal voor de jarige.</p><a class="text-link" data-order-link href="#bestellen">Geef een lied cadeau <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></article>
-    <article class="occasion-card thanks"><div class="occasion-art" aria-hidden="true"><svg viewBox="0 0 280 180"><path d="m115 156 15-80m30 80-18-72" stroke="currentColor" fill="none" stroke-width="5"/><path d="M130 98C65 98 70 30 118 58C93-6 171-6 149 56C199 17 221 90 153 94C196 133 129 157 130 98Z" fill="currentColor"/><circle cx="137" cy="75" r="14" fill="#dce8ce"/><path d="M124 126q-48-34-48 5q26 17 48-5m28-1q45-35 47 2q-23 20-47-2" fill="currentColor"/></svg><span>jij verdient een lied.</span></div><p class="occasion-category">Bedankt & zomaar</p><h3>Soms zegt muziek<br>gewoon meer.</h3><p>Voor iemand die er altijd is. Of omdat je eindelijk eens wilt zeggen hoeveel dat betekent.</p><a class="text-link" data-order-link href="#bestellen">Zeg het met muziek <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></article>
-  </div>
-  <nav class="occasion-links" aria-label="Meer over persoonlijke liedjes">
-    <a href="persoonlijk-lied-laten-maken.html">Persoonlijk lied laten maken</a>
-    <a href="verjaardagslied-laten-maken.html">Een verjaardagslied cadeau geven</a>
-    <a href="liefdeslied-laten-maken.html">Een liefdeslied laten maken</a>
-  </nav>
-</section>
-<section class="how section-wrap" id="werkwijze" aria-labelledby="how-title">
-  <div class="how-title"><p class="eyebrow">Van een idee naar jullie lied</p><h2 id="how-title">Jij vertelt.<br>Wij maken<br> <em>er muziek van.</em></h2><p>Geen muzikale kennis nodig.<br>Een verhaal is genoeg.</p><a class="text-link" data-order-link href="#bestellen">Begin met jouw verhaal <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
-  <div class="steps">
-    <article><span class="step-number" aria-hidden="true">1</span><div><h3>Vertel wat het persoonlijk maakt</h3><p>Voor wie is het lied? Deel jullie namen, herinneringen en alles wat je wilt zeggen.</p></div></article>
-    <article><span class="step-number" aria-hidden="true">2</span><div><h3>Geef het jouw geluid</h3><p>Een vrolijke popsong, rustige ballad of energieke hiphoptrack? Jij kiest de stijl en sfeer.</p></div></article>
-    <article><span class="step-number" aria-hidden="true">3</span><div><h3>Ontvang, luister en geef cadeau</h3><p>Je krijgt het lied en de songtekst digitaal. Klaar om te laten horen, te geven en te bewaren.</p></div></article>
-    <p class="delivery-note"><strong>Wanneer kun je luisteren?</strong> We streven naar levering binnen 1 werkdag na betaling en een complete vragenlijst. Bij drukte kan het langer duren. We informeren je dan tijdig.</p>
-  </div>
-</section>
-<section class="faq section-wrap" aria-labelledby="faq-title">
-  <div><p class="eyebrow">Nog even dit</p><h2 id="faq-title">Goed om<br> te <em>weten.</em></h2></div>
-  <div class="faq-list">
-    <details><summary>Wat ontvang ik precies?</summary><p>Je ontvangt één persoonlijk lied en de bijbehorende songtekst digitaal. Het lied wordt samengesteld op basis van jouw ingevulde vragenlijst. De plaat en envelop op deze website verbeelden het cadeau; je ontvangt geen fysiek product.</p></details>
-    <details><summary>Wordt mijn lied met AI gemaakt?</summary><p>Ja, muziek en zang worden met AI gemaakt. Wij stellen jouw lied persoonlijk samen en controleren het. Jouw verhaal en de gekozen muziekstijl geven de richting aan.</p></details>
-    <details><summary>Hoe persoonlijk kan ik het maken?</summary><p>Vertel over namen, mooie herinneringen, herkenbare eigenschappen of jullie eigen grapjes. Je kiest ook de muziekstijl, sfeer en taal en kunt aangeven hoe namen worden uitgesproken.</p></details>
-    <details><summary>Hoe snel is mijn lied klaar?</summary><p>We streven ernaar je bestelling binnen 1 werkdag te leveren, na betaling en ontvangst van de volledig ingevulde vragenlijst. Bij drukte kan het soms wat langer duren. In dat geval informeren we je tijdig.</p></details>
-  </div>
-</section>
-<section class="closing" id="bestellen" aria-labelledby="closing-title">
-  <div class="closing-inner"><span class="closing-note" aria-hidden="true">♪</span><p class="eyebrow">Dat ene verhaal verdient een lied</p><h2 id="closing-title">Voor wie maak<br>jij een lied?</h2><p>Begin bij een naam. Een herinnering.<br>De rest maken we samen persoonlijk.</p><a class="button button-light" data-order-link href="bestellen.html">Maak jouw lied <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a><p class="closing-price"><strong data-price-copy>€ 7,50</strong> inclusief btw · lied + songtekst</p><p class="availability" role="status">We controleren of online bestellen beschikbaar is…</p><noscript><p>Bekijk de <a href="bestellen.html">vragenlijst</a> of mail naar info@narrowvision.eu.</p></noscript></div>
-</section>
+  </section>
+  <div class="promise-strip" aria-label="Wat je krijgt"><span>♪ Jouw verhaal en muziekstijl</span><span>♫ Een persoonlijk lied en songtekst</span><span>♡ Digitaal geleverd</span></div>
+  <section class="home-explore section-wrap" aria-labelledby="explore-title">
+    <div class="home-section-title"><div><p class="eyebrow">Luister, voel, kies</p><h2 id="explore-title">Muziek voor jouw moment.</h2></div><a class="text-link" href="voorbeelden.html">Alle drie de luistervoorbeelden bekijken</a></div>
+    <div class="explore-grid">
+      <a class="explore-card" href="voorbeelden.html#trein"><img src="assets/photo-train.jpg" width="950" height="633" alt="Treinsporen in het warme licht van de ondergaande zon" loading="lazy"><span class="explore-caption"><small>Afscheid & loslaten</small><strong>De laatste trein</strong><span>Luister naar dit nummer</span></span></a>
+      <a class="explore-card" href="voorbeelden.html#verjaardag"><img src="assets/photo-birthday.jpg" width="950" height="633" alt="Vrienden vieren samen een verjaardag met een taart" loading="lazy"><span class="explore-caption"><small>Verjaardag & vieren</small><strong>Vandaag is van jou</strong><span>Luister naar dit nummer</span></span></a>
+      <a class="explore-card" href="voorbeelden.html#herinnering"><img src="assets/photo-memory.jpg" width="950" height="636" alt="Een oude zwart-witfoto wordt voorzichtig in twee handen vastgehouden" loading="lazy"><span class="explore-caption"><small>Herinnering & gemis</small><strong>Ik hoor je nog</strong><span>Luister naar dit nummer</span></span></a>
+    </div>
+    <p class="illustration-note">Fotografie is ter illustratie. De luisterfragmenten zijn echte Idea2Music-voorbeelden; muziek en zang zijn met AI gemaakt.</p>
+  </section>
+  <section class="home-simple" aria-labelledby="simple-title">
+    <div><p class="eyebrow">In drie stappen</p><h2 id="simple-title">Jouw woorden.<br><em>Jouw lied.</em></h2></div>
+    <div class="home-simple-steps">
+      <p><strong>1. Vertel je verhaal.</strong> Voor wie is het lied en welke momenten mogen niet ontbreken?</p>
+      <p><strong>2. Kies de sfeer.</strong> Van pop tot hiphop, van vrolijk tot emotioneel.</p>
+      <p><strong>3. Ontvang je lied.</strong> Digitaal, samen met de songtekst.</p>
+      <a class="text-link" href="zo-werkt-het.html">Lees hoe Idea2Music werkt</a>
+    </div>
+  </section>
+  <section class="home-final" aria-labelledby="final-title">
+    <div><p class="eyebrow">Klaar om iemand te verrassen?</p><h2 id="final-title">Welk verhaal verdient een lied?</h2><p>Je hebt geen muzikale kennis nodig. Alleen een verhaal.</p></div>
+    <div class="home-final-action"><a class="button" data-order-link href="bestellen.html">Begin jouw persoonlijke lied</a><p><strong data-price-copy>€ 7,50</strong> inclusief btw · lied + songtekst</p><p class="availability" role="status">We controleren of online bestellen beschikbaar is…</p></div>
+  </section>
 </main>
 <footer>
-  <div class="footer-top"><a class="brand-lockup" href="/" aria-label="Idea2Music — Jij het idee. Wij de muziek."><img src="assets/i2m-logo.png" width="1448" height="1086" alt=""></a><p>Een beetje van jou.<br>Een heel eigen lied.</p><a class="contact-email" href="mailto:info@narrowvision.eu">Stuur ons een bericht <svg class="icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
-  <div class="footer-bottom"><p>Muziek en zang gemaakt met AI.<br>Persoonlijk samengesteld en gecontroleerd.</p><p>KVK: 42203449 · Btw-id: NL005580746B56</p><div><a href="bestellen.html#bestelafspraken">Bestelafspraken</a><a href="bestellen.html#privacy">Privacy</a><a href="annuleren.html">Bestelling annuleren</a><button class="i2m-cookie-settings" type="button" data-cookie-settings>Cookievoorkeuren</button></div></div>
+  <div class="footer-top"><a class="brand-lockup" href="/" aria-label="Idea2Music — Jij het idee. Wij de muziek."><img src="assets/i2m-logo.png" width="1448" height="1086" alt=""></a><p>Een beetje van jou.<br>Een heel eigen lied.</p><a class="contact-email" href="mailto:info@narrowvision.eu">Stuur ons een bericht</a></div>
+  <div class="footer-bottom"><p>Muziek en zang gemaakt met AI.<br>Persoonlijk samengesteld en gecontroleerd.</p><p>KVK: 42203449 · Btw-id: NL005580746B56</p><div><a href="voorbeelden.html">Voorbeelden</a><a href="zo-werkt-het.html">Werkwijze</a><a href="bestellen.html#bestelafspraken">Bestelafspraken</a><a href="bestellen.html#privacy">Privacy</a><a href="annuleren.html">Bestelling annuleren</a><button class="i2m-cookie-settings" type="button" data-cookie-settings>Cookievoorkeuren</button></div></div>
 </footer>
 </body>
 </html>

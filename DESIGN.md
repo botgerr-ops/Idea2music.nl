@@ -38,6 +38,11 @@ components:
 ---
 # Idea2Music design
 
+## Navigation and real photography — 19 November 2026
+
+Robin found the one-page layout too long and the lack of actual photography unacceptable. The production experience is now a short, photo-led homepage plus dedicated examples (the three real 45-second demo files) and explanation (steps and FAQ) pages. The main navigation works on mobile without a hidden hamburger. multipage.css supplies the shared mature visual treatment. Five self-hosted Pexels photographs are illustrative stock only, never claims about customers or our recording facilities; provenance and license are in assets/PHOTO-CREDITS.md. The real I2M logo, original intro recording, price boundary, Pages checkout, D1/Mollie/Resend server code, consent and policy text were preserved. New photo/MP3 previews display no fake testimonials or claimed customers.
+
+
 ## Homepage visual revision — 19 November 2026
 
 Robin rejected the illustrated gift-card and cartoon-demo treatment as too childish. The production homepage now has a restrained, music-studio-led presentation while retaining the approved I2M logo and all existing ordering behavior. `studio.css` is loaded on `index.html` only: deep teal ink (#12262a), cool paper (#f4f5f2), self-hosted DM Sans, orange sound accent (#ff7448) and crisp editorial panels. The hero uses an audio waveform generated from the real Idea2Music introduction track; the three demo covers use real waveforms generated from the approved 45-second MP3 excerpts. No fictional customers, AI-generated images, stock illustrations, or new services are introduced. Cartoon-style occasion art is hidden on the homepage. Checkout styles and the server code are deliberately untouched. Regenerate waveform assets with `node scripts/generate-waveforms.mjs` when replacing audio files.

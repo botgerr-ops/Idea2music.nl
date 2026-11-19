@@ -28,3 +28,9 @@ fetch('/api/config', {cache:'no-store', signal:AbortSignal.timeout(8000)})
 const audio = document.querySelector('audio');
 audio.addEventListener('error', () => { document.querySelector('.audio-feedback').hidden = false; });
 audio.querySelector('source').addEventListener('error', () => { document.querySelector('.audio-feedback').hidden = false; });
+
+// A new sample should stop the previous one, especially on mobile.
+const players = [...document.querySelectorAll('audio')];
+players.forEach(player => player.addEventListener('play', () => {
+  players.forEach(other => { if (other !== player && !other.paused) other.pause(); });
+}));

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 
 const read = file => readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 const pages = [
@@ -42,6 +42,25 @@ test('homepage uses the current three-step offer and an honest audio preview', (
   assert.match(home, /Ons introductielied, gemaakt voor ons eigen verhaal/);
   assert.doesNotMatch(home, /wat je juist niet in het lied wilt/i);
   assert.match(checkout, /id="order-progress"/);
+});
+
+test('the three public listening samples use real, locally hosted audio files', () => {
+  const home = read('index.html');
+  assert.match(home, /id="voorbeelden"/);
+  for (const [title, file] of [
+    ['De laatste trein', 'de-laatste-trein-fragment.mp3'],
+    ['Vandaag is van jou', 'vandaag-is-van-jou-fragment.mp3'],
+    ['Ik hoor je nog', 'ik-hoor-je-nog-fragment.mp3']
+  ]) {
+    assert.ok(home.includes(`<h3>${title}</h3>`), title);
+    assert.ok(home.includes(`<source src="assets/${file}" type="audio/mpeg">`), file);
+    const size = statSync(new URL(`../assets/${file}`, import.meta.url)).size;
+    assert.ok(size > 100_000 && size < 1_500_000, `${file} should be a short excerpt`);
+  }
+  assert.match(home, /Drie luisterfragmenten van 45 seconden · muziek en zang gemaakt met AI/);
+  for (const fullFile of ['de-laatste-trein.mp3', 'vandaag-is-van-jou.mp3', 'ik-hoor-je-nog.mp3']) {
+    assert.equal(existsSync(new URL(`../assets/${fullFile}`, import.meta.url)), false, `${fullFile} must stay private`);
+  }
 });
 
 test('sitemap lists just the canonical indexable pages', () => {

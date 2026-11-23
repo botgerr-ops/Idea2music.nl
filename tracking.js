@@ -1,13 +1,17 @@
-/* Idea2Music: optional Meta measurement. Never load Meta before an explicit opt-in. */
+/* Idea2Music: optional Meta and Metricool tracking; never load either before explicit consent. */
 (() => {
   'use strict';
 
   const PIXEL_ID = '1189104470107229';
-  const CONSENT_KEY = 'idea2music-meta-consent-v1';
+  const METRICOOL_HASH = 'a267a32b21d013c46739e57056395474';
+  // New consent key: previous Meta-only consent must not authorize Metricool.
+  const CONSENT_KEY = 'idea2music-marketing-consent-v2';
   const CONSENT_MAX_AGE = 180 * 24 * 60 * 60 * 1000;
   const isOrderStatus = /\/bestelling(?:\.html)?\/?$/.test(location.pathname);
   const isCancellation = /\/annuleren(?:\.html)?\/?$/.test(location.pathname);
+  const isCheckout = /\/bestellen(?:\.html)?\/?$/.test(location.pathname);
   let loaded = false;
+  let metricoolLoaded = false;
   let pendingPurchase = null;
 
   function getChoice() {
@@ -44,6 +48,23 @@
     if (!isOrderStatus) window.fbq('track', 'PageView');
   }
 
+  function enableMetricool() {
+    // Metricool records public marketing visits only; never send form, payment
+    // status or cancellation URLs, where personal data or tokens might appear.
+    if (choice !== 'yes' || metricoolLoaded || isCheckout || isOrderStatus || isCancellation) return;
+    metricoolLoaded = true;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://tracker.metricool.com/resources/be.js';
+    script.onload = () => {
+      if (choice === 'yes' && typeof window.beTracker?.t === 'function') {
+        window.beTracker.t({ hash: METRICOOL_HASH });
+      }
+    };
+    script.onerror = () => { metricoolLoaded = false; };
+    document.head.appendChild(script);
+  }
+
   function amount(value) {
     return Number.isInteger(value) && value > 0 ? value / 100 : null;
   }
@@ -61,12 +82,13 @@
   }
 
   function choose(newChoice) {
-    const wasLoaded = loaded;
+    const wasLoaded = loaded || metricoolLoaded;
     choice = newChoice;
     try { localStorage.setItem(CONSENT_KEY, JSON.stringify({ choice, at: Date.now() })); } catch { /* Respect the current in-memory choice. */ }
     document.getElementById('i2m-consent')?.remove();
     if (choice === 'yes') {
       if (!isOrderStatus) enablePixel();
+      enableMetricool();
       sendPurchase();
     } else if (wasLoaded) {
       // Stop already-running Meta code immediately, then reload without loading it again.
@@ -86,7 +108,7 @@
     title.id = 'i2m-consent-title';
     title.textContent = 'Mogen we meten wat werkt?';
     const details = document.createElement('p');
-    details.textContent = 'Met jouw toestemming gebruiken we de Meta Pixel om websitebezoeken en betaalde bestellingen te meten. We delen geen ingevulde verhalen of contactgegevens. Je kunt weigeren en toch gewoon bestellen.';
+    details.textContent = 'Met jouw toestemming gebruiken we de Meta Pixel voor advertentiemeting en Metricool voor bezoekstatistieken van openbare pagina’s. We sturen geen ingevulde verhalen of contactgegevens naar deze diensten. Je kunt weigeren en toch gewoon bestellen.';
     const privacy = document.createElement('a');
     privacy.href = '/bestellen.html#privacy';
     privacy.textContent = 'Lees de privacyinformatie';
@@ -100,7 +122,7 @@
     refuse.addEventListener('click', () => choose('no'));
     const accept = document.createElement('button');
     accept.type = 'button';
-    accept.textContent = 'Marketing toestaan';
+    accept.textContent = 'Marketing en statistiek toestaan';
     accept.className = 'i2m-cookie-button i2m-cookie-accept';
     accept.addEventListener('click', () => choose('yes'));
     controls.append(refuse, accept);
@@ -134,6 +156,7 @@
   }
 
   if (choice === 'yes' && !isOrderStatus && !isCancellation) enablePixel();
+  if (choice === 'yes') enableMetricool();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup, { once: true });
   else setup();
 })();

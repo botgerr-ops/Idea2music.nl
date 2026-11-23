@@ -1,11 +1,19 @@
 const introductoryOfferEndsAt = Date.parse('2026-12-01T00:00:00+01:00');
+const sinterklaasCampaignEndsAt = Date.parse('2026-12-06T00:00:00+01:00');
 function refreshSongPrice() {
   const introductory = Date.now() < introductoryOfferEndsAt;
+  const isSinterklaasSeason = Date.now() < sinterklaasCampaignEndsAt;
   document.getElementById('song-price').textContent = introductory ? '€ 7,50' : '€ 15,00';
   document.querySelectorAll('[data-price-copy]').forEach(el => { el.textContent = introductory ? '€ 7,50' : '€ 15,00'; });
   document.querySelectorAll('[data-cta-price]').forEach(el => { el.textContent = introductory ? '€ 7,50' : '€ 15,00'; });
   document.querySelectorAll('[data-promo-only]').forEach(el => { el.hidden = !introductory; });
-  document.getElementById('offer-label').textContent = introductory ? 'Een persoonlijk lied met 50% introductiekorting' : 'Jouw verhaal, persoonlijk op muziek';
+  document.getElementById('offer-label').textContent = introductory
+    ? 'Sinterklaasactie: een persoonlijk lied voor € 7,50'
+    : (isSinterklaasSeason ? 'Een persoonlijk lied cadeau voor Sinterklaas' : 'Jouw verhaal, persoonlijk op muziek');
+  const heroIntro = document.querySelector('.hero-intro');
+  if (heroIntro) heroIntro.textContent = isSinterklaasSeason
+    ? 'Op zoek naar een origineel Sinterklaascadeau? Laat een persoonlijk lied maken met herkenbare namen, herinneringen en grappige gewoontes. Ook voor verjaardagen en andere bijzondere momenten.'
+    : 'Van een bijzondere verjaardag tot een herinnering die je nooit wilt vergeten. Jouw verhaal wordt een lied dat écht iets zegt.';
   document.getElementById('offer-details').textContent = introductory ? 'T/m 30 november 2026. Vanaf 1 december € 15,00 inclusief btw.' : 'Eén persoonlijk lied met songtekst, digitaal bezorgd.';
 }
 refreshSongPrice();

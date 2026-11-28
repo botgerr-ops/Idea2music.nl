@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
 import {openOrdersDb} from './render-db.mjs';
 import {onRequest} from '../functions/api/[[path]].js';
-const regression=spawnSync(process.execPath,['--test','tests/render-checkout.test.js'],{stdio:'inherit',timeout:60000,env:{PATH:process.env.PATH||'',TZ:'UTC'}});
+const regression=spawnSync(process.execPath,['--test','tests/render-checkout.test.js','tests/render-d1-import.test.js'],{stdio:'inherit',timeout:60000,env:{PATH:process.env.PATH||'',TZ:'UTC'}});
 if(regression.status!==0)throw new Error('Render checkout regression failed');
 const testEnv=Object.freeze({ORDERS_DB:openOrdersDb(),CHECKOUT_ENABLED:'false',CREATOR_ENABLED:'false'});
 const root = resolve(process.cwd());

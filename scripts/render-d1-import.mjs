@@ -1,6 +1,7 @@
 // Explicit, read-only D1 transfer. No provider calls or customer data in logs.
 import {createHash} from 'node:crypto';
 import {writeFileSync,renameSync} from 'node:fs';
+import {openOrdersDb} from './render-db.mjs';
 const tables=[
  ['orders','id','id token_hash payload_hash payload_json amount_cents created_at payment_id checkout_url payment_status paid_at cancellation_requested_at consent_version'],
  ['mail_outbox','id','id order_id body_json state claimed_at sent_at provider_id'],
@@ -106,7 +107,9 @@ export async function runD1Import(db,env,mount,fetcher=fetch){
  const sourceEnv=env.CF_D1_ACCOUNT_ID&&env.CF_D1_DATABASE_ID?env:await discoverD1(env,fetcher);
  const snapshot=await stableD1Snapshot(sourceEnv,fetcher);
  if(mode==='check'){
-  console.log('D1 read-only verification complete; counts '+JSON.stringify(Object.fromEntries(tables.map(t=>[t.name,snapshot[t.name].length]))));
+  const rehearsal=openOrdersDb();
+  try{const report=applySnapshot(rehearsal,snapshot);console.log('D1 isolated import rehearsal PASS; row hashes and foreign keys verified; counts '+JSON.stringify(report.counts));}finally{rehearsal.close();}
+  console.log('D1 read-only verification complete; live destination unchanged');
   return;
  }
  assert(env.I2M_SOURCE_FROZEN==='true','Copy requires confirmed source write freeze');

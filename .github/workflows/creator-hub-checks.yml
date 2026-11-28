@@ -1,0 +1,19 @@
+name: Creator Hub checks
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run check
+      - run: node --check lib/creator-admin-auth.js && node --check lib/creator-admin.js && node --check partner-manager.js && node --check lib/creator-checkout.js && node --check lib/creator-rules.js && node --check lib/creator-payouts.js && node --check lib/creator-finance.js && node --check lib/creator-portal.js && node --check creator.js && node --check partners.js && node --check lib/creator-application.js
+      - run: npm test

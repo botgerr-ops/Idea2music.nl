@@ -1,5 +1,10 @@
+import {applyCreator} from '../../lib/creator-application.js';
+import {creatorPortal} from '../../lib/creator-portal.js';
+import {creatorAdmin} from '../../lib/creator-admin.js';
 import {CONSENT_VERSION, CONSENT, DELIVERY, fields, priceAt, euro, validateOrder} from '../../lib/order-rules.js';
 import {maybeInvoicePaid} from '../../lib/ebookhouden.js';
+import {creatorEnabled,getCreatorQuote,existingAttribution,insertAttributedOrder,recordPendingCommission} from '../../lib/creator-checkout.js';
+import {normalizeCreatorCode} from '../../lib/creator-rules.js';
 
 const json = (data, status=200) => Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'}});
 const fail = (status, message) => Object.assign(new Error(message), {status});
@@ -96,6 +101,7 @@ async function syncPayment(env,row,payment) {
  await env.ORDERS_DB.prepare("UPDATE orders SET payment_id=COALESCE(payment_id,?),payment_status=CASE WHEN payment_status='paid' THEN 'paid' ELSE ? END,paid_at=COALESCE(paid_at,?) WHERE id=?").bind(payment.id,status,status==='paid'?(payment.paidAt||new Date().toISOString()):null,row.id).run();
  const updated=await env.ORDERS_DB.prepare('SELECT * FROM orders WHERE id=?').bind(row.id).first();
  if(updated.payment_status==='paid') {
+  if(updated.amount_cents===1350) await recordPendingCommission(env,updated);
   await notifyPaid(env,updated);
   // Invoice failures must not affect the already verified Mollie payment.
   // The integration remains off unless explicitly configured and enabled.
@@ -109,15 +115,28 @@ async function checkout(request,env) {
  if(Object.keys(errors).length) return json({message:'Controleer de aangegeven velden.',errors},422);
  if(!validId(body.orderId)||!validToken(body.token)) throw fail(400,'Herlaad de pagina en probeer opnieuw.');
  const tokenHash=await sha(body.token), payload=JSON.stringify(values), payloadHash=await sha(payload);
+ const requestedCode=body.creatorCode==null||body.creatorCode===''?null:normalizeCreatorCode(body.creatorCode);
+ if(body.creatorCode!=null&&body.creatorCode!==''&&!requestedCode) throw fail(422,'Deze partnercode is niet geldig.');
+ if(requestedCode&&!creatorEnabled(env)) throw fail(409,'Partnercodes zijn nog niet beschikbaar.');
  let row=await env.ORDERS_DB.prepare('SELECT * FROM orders WHERE id=?').bind(body.orderId).first();
  if(row && (row.token_hash!==tokenHash||row.payload_hash!==payloadHash)) throw fail(409,'De gegevens zijn gewijzigd. Start een nieuwe bestelling.');
  if(!row) {
-  const quotedPrice=priceAt();
-  if(body.amountCents!==quotedPrice) throw fail(409,'De actieprijs is gewijzigd. Herlaad de pagina om de actuele prijs te zien.');
-  await env.ORDERS_DB.prepare('INSERT OR IGNORE INTO orders(id,token_hash,payload_hash,payload_json,amount_cents,created_at,consent_version) VALUES(?,?,?,?,?,?,?)').bind(body.orderId,tokenHash,payloadHash,payload,quotedPrice,new Date().toISOString(),CONSENT_VERSION).run();
+  const quote=requestedCode?await getCreatorQuote(env,requestedCode):{amountCents:priceAt(),attribution:null};
+  if(quote.error) throw fail(409,quote.error);
+  if(quote.partnerEmail&&quote.partnerEmail.trim().toLowerCase()===values.email.toLowerCase()) throw fail(409,'Deze partnercode is niet geldig voor deze bestelling.');
+  const quotedPrice=quote.amountCents,createdAt=new Date().toISOString();
+  if(body.amountCents!==quotedPrice) throw fail(409,'De prijs is gewijzigd. Herlaad de pagina om de actuele prijs te zien.');
+  const insertOrder=env.ORDERS_DB.prepare('INSERT OR IGNORE INTO orders(id,token_hash,payload_hash,payload_json,amount_cents,created_at,consent_version) VALUES(?,?,?,?,?,?,?)').bind(body.orderId,tokenHash,payloadHash,payload,quotedPrice,createdAt,CONSENT_VERSION);
+  if(quote.attribution) await insertAttributedOrder(env,insertOrder,{id:body.orderId,tokenHash,payloadHash,createdAt},quote);
+  else await insertOrder.run();
   row=await authorize(request,env,body.orderId,body.token);
   if(row.payload_hash!==payloadHash) throw fail(409,'De gegevens zijn gewijzigd. Start een nieuwe bestelling.');
  }
+ if(creatorEnabled(env)||row.amount_cents===1350) {
+  const attribution=await existingAttribution(env,row.id);
+  if((attribution?.code||null)!==requestedCode || (attribution&&attribution.sale_cents!==row.amount_cents)) throw fail(409,'De partnercode is gewijzigd. Start een nieuwe bestelling.');
+ }
+ if(row.amount_cents!==body.amountCents) throw fail(409,'De prijs is gewijzigd. Start een nieuwe bestelling.');
  if(row.cancellation_requested_at) throw fail(409,'Voor deze bestelling is annulering aangevraagd. Neem contact op.');
  if(row.payment_status==='paid') return json({paid:true,orderId:row.id});
  if(Date.now()-Date.parse(row.created_at)>30*60000) throw fail(409,'Deze betaalpoging is verlopen. Start een nieuwe bestelling.');
@@ -147,9 +166,24 @@ async function cancel(request,env) {
 export async function onRequest({request,env,params}) {
  try {
   const path=Array.isArray(params.path)?params.path.join('/'):params.path;
-  if(path==='config'&&request.method==='GET') { const checks=await readiness(env); return json({enabled:Object.values(checks).every(Boolean),test:env.MOLLIE_API_KEY?.startsWith('test_') || false,amountCents:priceAt(),checks}); }
+  if(typeof path==='string'&&path.startsWith('creator-admin/')) return await creatorAdmin(request,env,path);
+  if(typeof path==='string'&&path.startsWith('creator-portal/')) return await creatorPortal(request,env,path);
+  if(path==='creator-application'&&request.method==='POST'){
+   if(env.CREATOR_APPLICATION_ENABLED!=='true')throw fail(404,'Aanmelden is nog niet beschikbaar.');
+   if(!env.ORDERS_DB||!env.PUBLIC_SITE_URL)throw fail(503,'Aanmelden is tijdelijk niet beschikbaar.');
+   if(request.headers.get('Origin')!==site(env)||!request.headers.get('Content-Type')?.toLowerCase().startsWith('application/json'))throw fail(403,'Open het formulier via de website.');
+   await limited(request,env,'creator-application',3);
+   const result=await applyCreator(env,await readBody(request));return json(result.body,result.status);
+  }
+  if(path==='config'&&request.method==='GET') { const checks=await readiness(env); return json({enabled:Object.values(checks).every(Boolean),test:env.MOLLIE_API_KEY?.startsWith('test_') || false,amountCents:priceAt(),creatorEnabled:creatorEnabled(env),checks}); }
   if(!configured(env)) throw fail(503,'Online bestellen is nog niet beschikbaar. Neem contact op via info@narrowvision.eu.');
   if(request.method==='POST'&&path!=='webhook'&&request.headers.get('Origin')!==site(env)) throw fail(403,'Open het formulier via de website.');
+  if(path==='creator-quote'&&request.method==='GET') {
+   await limited(request,env,'creator-quote',20);
+   const code=new URL(request.url).searchParams.get('code');
+   const quote=await getCreatorQuote(env,code);
+   return json({amountCents:quote.amountCents,valid:!!quote.attribution,code:quote.attribution?.code||null,message:quote.error||null});
+  }
   if(path==='checkout'&&request.method==='POST') return await checkout(request,env);
   if(path==='cancel'&&request.method==='POST') return await cancel(request,env);
   if(path==='status'&&request.method==='GET') {

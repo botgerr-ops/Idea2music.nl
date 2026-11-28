@@ -11,7 +11,7 @@ const root=resolve(process.cwd()), mount='/var/data';
 const mounted=readFileSync('/proc/self/mountinfo','utf8').split('\n').some(l=>l.split(' ')[4]===mount);
 if(!mounted)throw Error('Persistent orders disk is required');
 const db=openOrdersDb(mount+'/orders.sqlite');
-try{await runD1Import(db,process.env,mount);}catch(error){console.error('D1 migration blocked: '+(error.message?.startsWith('D1 read failed (HTTP ') ? error.message : 'verification or import failed; checkout remains disabled'));db.close();process.exit(1);}
+try{await runD1Import(db,process.env,mount);}catch(error){console.error('D1 migration blocked: '+((/^(D1 (read|discovery) failed \(HTTP \d+\)|Cloudflare read token missing|D1 discovery requires exactly one matching idea2music-orders database)$/.test(error.message||'')) ? error.message : 'verification or import failed; checkout remains disabled'));db.close();process.exit(1);}
 const origin='https://www.idea2music.nl';
 const cutover=process.env.I2M_CUTOVER_READY==='true'&&existsSync(mount+'/migration-verified');
 if(process.env.CHECKOUT_ENABLED==='true'&&!cutover)throw Error('Checkout requires verified import and explicit cutover');

@@ -1,9 +1,12 @@
 // Render-only preview. No provider credentials, no writes, no live tracking.
 import http from 'node:http';
+import {spawnSync} from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
 import {openOrdersDb} from './render-db.mjs';
 import {onRequest} from '../functions/api/[[path]].js';
+const regression=spawnSync(process.execPath,['--test','tests/render-checkout.test.js'],{stdio:'inherit',timeout:60000,env:{PATH:process.env.PATH||'',TZ:'UTC'}});
+if(regression.status!==0)throw new Error('Render checkout regression failed');
 const testEnv=Object.freeze({ORDERS_DB:openOrdersDb(),CHECKOUT_ENABLED:'false',CREATOR_ENABLED:'false'});
 const root = resolve(process.cwd());
 const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff2':'font/woff2','.mp3':'audio/mpeg','.mp4':'video/mp4'};

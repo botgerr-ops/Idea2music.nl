@@ -32,7 +32,7 @@ async function refresh(){
   }
   for(const c of d.codes){const row=$('codes').insertRow();td(row,c.code);td(row,names.get(c.partner_id)||'Partner');td(row,money(c.commission_cents));td(row,c.active?'Ja':'Nee');const actions=td(row,'');
    button(actions,c.active?'Uitschakelen':'Inschakelen',()=>act('code-status',{code:c.code,active:!c.active}));
-   button(actions,'Link kopiëren',async()=>{try{await navigator.clipboard.writeText(new URL('/bestellen.html?ref='+encodeURIComponent(c.code),location.origin).href);$('status').textContent='Link gekopieerd voor dit domein.';}catch{$('status').textContent='Kopiëren mislukt.';}});
+   button(actions,'Code kopiëren',async()=>{try{await navigator.clipboard.writeText(c.code);$('status').textContent='Kortingscode gekopieerd.';}catch{$('status').textContent='Kopiëren mislukt.';}});
   }
   for(const c of d.commissions){const row=$('commissions').insertRow();td(row,'I2M-'+c.order_id);td(row,names.get(c.partner_id)||c.code);td(row,money(c.amount_cents));td(row,labels[c.status]||c.status);td(row,date(c.delivered_at));const actions=td(row,'');
    if(c.status==='pending'&&!c.delivered_at)button(actions,'Geleverd',()=>{if(confirm('Is dit lied daadwerkelijk aan de klant geleverd?'))act('delivered',{orderId:c.order_id,confirmed:true});});

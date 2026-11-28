@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: idea2music-production
+    runtime: node
+    plan: 0.5c-512mb
+    region: frankfurt
+    branch: test/render-preview
+    autoDeployTrigger: off
+    numInstances: 1
+    buildCommand: node --check scripts/render-production.mjs && node --test tests/render-checkout.test.js
+    startCommand: node scripts/render-production.mjs
+    healthCheckPath: /healthz
+    disk:
+      name: orders-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: CHECKOUT_ENABLED
+        value: "false"
+      - key: I2M_CUTOVER_READY
+        value: "false"
+      - key: EBOEKHOUDEN_INVOICING_ENABLED
+        value: "false"

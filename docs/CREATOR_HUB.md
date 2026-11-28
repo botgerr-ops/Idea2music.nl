@@ -1,6 +1,6 @@
 # Idea2Music Creator Hub — pilot implementation contract
 
-Status: isolated development branch, not enabled and not deployed. No production database changes. This first increment is an additive data model, pricing/eligibility rules and unit-test source. It does not yet accept partner orders or provide logins, a portal or automatic payouts.
+Status: isolated development branch, not enabled and not deployed. No production database changes. The branch now also includes feature-flagged checkout integration and pending commission persistence. It does not yet provide logins, a portal, commission approval or payouts. Do not enable CREATOR_ENABLED before migration and all acceptance tests.
 
 ## Agreed commercial proposal
 - Regular €15 including VAT; partner customer pays €13.50, only after introduction offer ends on 1 December 2026.
@@ -18,4 +18,4 @@ Status: isolated development branch, not enabled and not deployed. No production
 6. Test with fake providers and separate preview DB; no live keys, real orders, emails, or payments in automated tests. Regression tests: unchanged normal checkout, intro discount, invalid/disabled codes, price tampering, parallel duplicate checkout, webhook retries, refund/chargeback after payout, ownership/authorization, session expiry, no leakage, payout threshold, duplicate payout and invoice totals. Validate preview before production release. Production migration and feature activation require explicit approval.
 
 ## Existing architecture
-Static HTML and JS, Cloudflare Pages Functions, D1 ORDERS_DB, Mollie and e-Boekhouden. Existing checkout priceAt and syncPayment remain unchanged in this first increment. Do not modify main or live runtime configuration. Execute npm test in Node 24+; tests in this commit are source until their execution is confirmed.
+Static HTML and JS, Cloudflare Pages Functions, D1 ORDERS_DB, Mollie and e-Boekhouden. Regular priceAt remains unchanged. Checkout and syncPayment now include a feature-flagged partner flow, with pending commission reconciliation for existing €13.50 orders even when new codes are disabled. Keep the additive migration installed when disabling codes. Do not modify main or live runtime configuration. Execute npm test in Node 24+; tests in this commit are source until their execution is confirmed. Integration tests must exercise real D1 batch semantics, concurrent retries, feature disable, own-order prevention (email match only at this stage), code revocation, refund handling and browser price display before enabling the program.

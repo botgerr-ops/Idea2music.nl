@@ -98,7 +98,7 @@ async function syncPayment(env,row,payment) {
  await env.ORDERS_DB.prepare("UPDATE orders SET payment_id=COALESCE(payment_id,?),payment_status=CASE WHEN payment_status='paid' THEN 'paid' ELSE ? END,paid_at=COALESCE(paid_at,?) WHERE id=?").bind(payment.id,status,status==='paid'?(payment.paidAt||new Date().toISOString()):null,row.id).run();
  const updated=await env.ORDERS_DB.prepare('SELECT * FROM orders WHERE id=?').bind(row.id).first();
  if(updated.payment_status==='paid') {
-  if(creatorEnabled(env)) await recordPendingCommission(env,updated);
+  if(updated.amount_cents===1350) await recordPendingCommission(env,updated);
   await notifyPaid(env,updated);
   // Invoice failures must not affect the already verified Mollie payment.
   // The integration remains off unless explicitly configured and enabled.
@@ -129,7 +129,7 @@ async function checkout(request,env) {
   row=await authorize(request,env,body.orderId,body.token);
   if(row.payload_hash!==payloadHash) throw fail(409,'De gegevens zijn gewijzigd. Start een nieuwe bestelling.');
  }
- if(creatorEnabled(env)) {
+ if(creatorEnabled(env)||row.amount_cents===1350) {
   const attribution=await existingAttribution(env,row.id);
   if((attribution?.code||null)!==requestedCode || (attribution&&attribution.sale_cents!==row.amount_cents)) throw fail(409,'De partnercode is gewijzigd. Start een nieuwe bestelling.');
  }

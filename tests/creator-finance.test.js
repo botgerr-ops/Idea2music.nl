@@ -6,7 +6,7 @@ const p={id:row.payment_id,metadata:{orderId:row.order_id},mode:'test',status:'p
 const list=(key,entries=[])=>({count:entries.length,_embedded:{[key]:entries},_links:{next:null}});
 const refunds=list('refunds'),charges=list('chargebacks');
 const classify=(payment=p,r=refunds,c=charges)=>classifyPayment(payment,r,c,row,'test');
-test('verified paid order with no refunds or chargebacks is clean',()=>assert.deepEqual(classify(),{status:'paid',refunded:false,chargedBack:false}));
+test('verified paid order with no refunds or chargebacks is clean',()=>assert.deepEqual(classify(),{status:'paid',refunded:false,chargedBack:false,settledRefund:false}));
 test('refunds and chargebacks block approval',()=>{
  assert.equal(classify(p,list('refunds',[{status:'pending'}])).refunded,true);
  assert.equal(classify(p,list('refunds',[{status:'refunded'}])).refunded,true);

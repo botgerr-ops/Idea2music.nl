@@ -28,11 +28,16 @@ export async function discoverD1(env,fetcher=fetch){
  }
  const accounts=env.CF_D1_ACCOUNT_ID?[{id:env.CF_D1_ACCOUNT_ID}]:await list('/accounts');
  const matches=[];
+ let databaseCount=0;
+ console.log('D1 discovery: accessible accounts '+accounts.length);
  for(const account of accounts){
   if(!/^[a-f0-9]{32}$/i.test(account.id))continue;
   const databases=await list('/accounts/'+account.id+'/d1/database');
+  databaseCount+=databases.length;
+  for(const database of databases)if(typeof database.name==='string'&&/^idea[\w-]*music[\w-]*$/i.test(database.name))console.log('D1 candidate name: '+database.name);
   for(const database of databases)if(database.name==='idea2music-orders'&&/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(database.uuid||''))matches.push({account:account.id,db:database.uuid});
  }
+ console.log('D1 discovery: visible databases '+databaseCount+', exact matches '+matches.length);
  assert(matches.length===1,'D1 discovery requires exactly one matching idea2music-orders database');
  console.log('D1 target discovered: account '+matches[0].account+' database '+matches[0].db);
  return {...env,CF_D1_ACCOUNT_ID:matches[0].account,CF_D1_DATABASE_ID:matches[0].db};

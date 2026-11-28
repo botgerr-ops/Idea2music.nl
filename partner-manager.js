@@ -36,6 +36,7 @@ async function refresh(){
   }
   for(const c of d.commissions){const row=$('commissions').insertRow();td(row,'I2M-'+c.order_id);td(row,names.get(c.partner_id)||c.code);td(row,money(c.amount_cents));td(row,labels[c.status]||c.status);td(row,date(c.delivered_at));const actions=td(row,'');
    if(c.status==='pending'&&!c.delivered_at)button(actions,'Geleverd',()=>{if(confirm('Is dit lied daadwerkelijk aan de klant geleverd?'))act('delivered',{orderId:c.order_id,confirmed:true});});
+   if(d.financeEnabled&&['pending','approved'].includes(c.status)&&c.delivered_at)button(actions,'Commissie controleren',()=>{if(confirm('Bevestig dat u de bestelling, daadwerkelijke levering en mogelijke fraude heeft gecontroleerd. De betaalstatus wordt opnieuw gecontroleerd.'))act('review-commission',{orderId:c.order_id,confirmed:true});});
   }
   empty($('partners'),4,'Nog geen partners.');empty($('codes'),5,'Nog geen codes.');empty($('commissions'),6,'Nog geen commissies.');
   $('manager').hidden=false;$('status').textContent='Overzicht geladen.'+(d.totals.total_partners>d.partners.length||d.totals.total_codes>d.codes.length||d.totals.total_commissions>d.commissions.length?' Alleen de meest recente rijen worden getoond.':'');

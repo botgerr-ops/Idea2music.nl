@@ -2,10 +2,11 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
-import { priceAt } from '../lib/order-rules.js';
+import {openOrdersDb} from './render-db.mjs';
+import {onRequest} from '../functions/api/[[path]].js';
+const testEnv=Object.freeze({ORDERS_DB:openOrdersDb(),CHECKOUT_ENABLED:'false',CREATOR_ENABLED:'false'});
 const root = resolve(process.cwd());
 const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff2':'font/woff2','.mp3':'audio/mpeg','.mp4':'video/mp4'};
-const config = {enabled:false,test:true,amountCents:priceAt(),creatorEnabled:false};
 const headers = {'X-Robots-Tag':'noindex, nofollow','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'",'Cache-Control':'no-store'};
 const server = http.createServer(async (req,res)=>{
  for(const [k,v] of Object.entries(headers)) res.setHeader(k,v);
@@ -14,7 +15,10 @@ const server = http.createServer(async (req,res)=>{
  try{
   let path=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
   if(path==='/healthz')return reply(200,JSON.stringify({status:'ok',mode:'isolated-preview',checkout:false,tracking:false}), 'application/json');
-  if(path==='/api/config')return reply(200,JSON.stringify({...config,amountCents:priceAt()}),'application/json');
+  if(path==='/api/config'){
+   const result=await onRequest({request:new Request('https://preview.invalid/api/config'),env:testEnv,params:{path:['config']}});
+   const payload=await result.json();return reply(result.status,JSON.stringify({...payload,enabled:false,test:true,creatorEnabled:false}),'application/json');
+  }
   if(path.startsWith('/api/'))return reply(503,JSON.stringify({message:'Deze functie is in de testomgeving nog niet beschikbaar.'}),'application/json');
   if(path==='/robots.txt')return reply(200,'User-agent: *\nDisallow: /\n');
   if(path==='/tracking.js')return reply(200,'window.I2MTracking=Object.freeze({trackInitiateCheckout(){},trackPurchase(){}});',types['.js']);

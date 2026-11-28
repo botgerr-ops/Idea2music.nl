@@ -15,5 +15,5 @@ jobs:
         with:
           node-version: '24'
       - run: npm run check
-      - run: node --check lib/creator-admin-auth.js && node --check lib/creator-admin.js && node --check partner-manager.js && node --check lib/creator-checkout.js && node --check lib/creator-rules.js && node --check lib/creator-portal.js && node --check creator.js
+      - run: node --check lib/creator-admin-auth.js && node --check lib/creator-admin.js && node --check partner-manager.js && node --check lib/creator-checkout.js && node --check lib/creator-rules.js && node --check lib/creator-finance.js && node --check lib/creator-portal.js && node --check creator.js
       - run: npm test

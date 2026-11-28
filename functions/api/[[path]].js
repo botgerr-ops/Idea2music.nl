@@ -1,3 +1,4 @@
+import {creatorPortal} from '../../lib/creator-portal.js';
 import {creatorAdmin} from '../../lib/creator-admin.js';
 import {CONSENT_VERSION, CONSENT, DELIVERY, fields, priceAt, euro, validateOrder} from '../../lib/order-rules.js';
 import {maybeInvoicePaid} from '../../lib/ebookhouden.js';
@@ -165,6 +166,7 @@ export async function onRequest({request,env,params}) {
  try {
   const path=Array.isArray(params.path)?params.path.join('/'):params.path;
   if(typeof path==='string'&&path.startsWith('creator-admin/')) return await creatorAdmin(request,env,path);
+  if(typeof path==='string'&&path.startsWith('creator-portal/')) return await creatorPortal(request,env,path);
   if(path==='config'&&request.method==='GET') { const checks=await readiness(env); return json({enabled:Object.values(checks).every(Boolean),test:env.MOLLIE_API_KEY?.startsWith('test_') || false,amountCents:priceAt(),creatorEnabled:creatorEnabled(env),checks}); }
   if(!configured(env)) throw fail(503,'Online bestellen is nog niet beschikbaar. Neem contact op via info@narrowvision.eu.');
   if(request.method==='POST'&&path!=='webhook'&&request.headers.get('Origin')!==site(env)) throw fail(403,'Open het formulier via de website.');

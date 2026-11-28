@@ -12,6 +12,7 @@ const mounted=readFileSync('/proc/self/mountinfo','utf8').split('\n').some(l=>l.
 if(!mounted)throw Error('Persistent orders disk is required');
 const db=openOrdersDb(mount+'/orders.sqlite');
 try{await runD1Import(db,process.env,mount);}catch(error){console.error('D1 migration blocked: '+((/^(D1 (read|discovery) failed \(HTTP \d+\)|Cloudflare read token missing|D1 discovery requires exactly one matching idea2music-orders database)$/.test(error.message||'')) ? error.message : 'verification or import failed; checkout remains disabled'));if(process.env.I2M_IMPORT_MODE!=='check'||process.env.CHECKOUT_ENABLED==='true'||process.env.I2M_CUTOVER_READY==='true'){db.close();process.exit(1);}}
+if(process.env.I2M_IMPORT_MODE==='check')console.log('Provider configuration presence (not validity): '+JSON.stringify(Object.fromEntries(['MOLLIE_API_KEY','RESEND_API_KEY','MAIL_FROM','EBOEKHOUDEN_API_TOKEN'].map(key=>[key,Boolean(process.env[key])]))));
 const origin='https://www.idea2music.nl';
 const cutover=process.env.I2M_CUTOVER_READY==='true'&&existsSync(mount+'/migration-verified');
 if(process.env.CHECKOUT_ENABLED==='true'&&!cutover)throw Error('Checkout requires verified import and explicit cutover');

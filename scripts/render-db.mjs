@@ -19,5 +19,6 @@ export function openOrdersDb(filename=':memory:'){
    all(){return{success:true,results:db.prepare(sql).all(...args).map(row=>({...row}))};},
    run(){const result=db.prepare(sql).run(...args);return {success:true,meta:{changes:Number(result.changes),last_row_id:Number(result.lastInsertRowid)}};}};
  }
- return {prepare,batch(stmts){db.exec('BEGIN IMMEDIATE');try{const result=stmts.map(s=>s.run());db.exec('COMMIT');return result;}catch(e){db.exec('ROLLBACK');throw e;}},close(){db.close();}};
+ function transaction(fn){db.exec('BEGIN IMMEDIATE');try{const result=fn();db.exec('COMMIT');return result;}catch(e){db.exec('ROLLBACK');throw e;}}
+ return {prepare,transaction,batch(stmts){return transaction(()=>stmts.map(s=>s.run()));},close(){db.close();}};
 }

@@ -11,8 +11,7 @@ const creatorRemove=document.createElement('button');creatorRemove.type='button'
 const creatorNotice=document.createElement('p');creatorNotice.setAttribute('role','status');
 creatorBox.append(creatorLabel,creatorInput,creatorApply,creatorRemove,creatorNotice);
 document.getElementById('availability').after(creatorBox);
-let creatorCode=null,quoteBusy=false,configLoaded=false,requestVersion=0;
-creatorInput.value=(new URL(location.href).searchParams.get('ref')||'').slice(0,32);
+let creatorCode=null,quoteBusy=false,requestVersion=0;
 function lockCode(){
  const locked=busy||quoteBusy||!!identity;
  creatorInput.disabled=locked;creatorApply.disabled=locked;creatorRemove.disabled=locked;
@@ -104,7 +103,7 @@ function showErrors(errors,keys=[...Object.keys(fields),'terms','digitalConsent'
  const first=keys.find(key=>errors[key]);if(first)form.elements[first].focus();return !first;
 }
 function displayPrice(){document.querySelectorAll('[data-price]').forEach(el=>el.textContent=euro(config.amountCents));if(Date.now()>=PROMO_END)document.querySelector('[data-offer]').textContent=creatorCode?'10% partnerkorting toegepast.':'Eén persoonlijk samengesteld en gecontroleerd lied met songtekst.';pay.textContent=`Bestellen en betalen — ${euro(config.amountCents)}`;}
-async function loadConfig(){try{const r=await fetch('/api/config',{signal:AbortSignal.timeout(10000),cache:'no-store'});if(!r.ok)throw Error();const next=await r.json();config={...next,baseAmountCents:next.amountCents};if(identity&&creatorCode)config.amountCents=1350;else creatorCode=null;creatorBox.hidden=!config.creatorEnabled;displayPrice();document.getElementById('availability').textContent=config.enabled?(config.test?'Testomgeving: er worden geen echte betalingen gedaan.':'Uw aanvraag wordt pas definitief nadat Mollie uw betaling bevestigt.'):'Online bestellen is nog niet geopend. U kunt het formulier bekijken; betalen is nog niet mogelijk. Vragen? Mail info@narrowvision.eu.';}catch{config.enabled=false;document.getElementById('availability').textContent='De bestelstatus is niet bereikbaar. Probeer later opnieuw of mail info@narrowvision.eu.';}lockCode();if(config.creatorEnabled&&!identity&&creatorInput.value&&!configLoaded){configLoaded=true;await applyCode();}else if(config.creatorEnabled&&!identity&&creatorInput.value){await applyCode();}}
+async function loadConfig(){try{const r=await fetch('/api/config',{signal:AbortSignal.timeout(10000),cache:'no-store'});if(!r.ok)throw Error();const next=await r.json();config={...next,baseAmountCents:next.amountCents};if(identity&&creatorCode)config.amountCents=1350;else creatorCode=null;creatorBox.hidden=!config.creatorEnabled;displayPrice();document.getElementById('availability').textContent=config.enabled?(config.test?'Testomgeving: er worden geen echte betalingen gedaan.':'Uw aanvraag wordt pas definitief nadat Mollie uw betaling bevestigt.'):'Online bestellen is nog niet geopend. U kunt het formulier bekijken; betalen is nog niet mogelijk. Vragen? Mail info@narrowvision.eu.';}catch{config.enabled=false;document.getElementById('availability').textContent='De bestelstatus is niet bereikbaar. Probeer later opnieuw of mail info@narrowvision.eu.';}lockCode();if(config.creatorEnabled&&!identity&&creatorInput.value){creatorNotice.textContent='Voer uw kortingscode in en klik op Toepassen.';}}
 document.getElementById('review-button').addEventListener('click',()=>{
  const {values,errors}=validateOrder(answers());delete errors.terms;delete errors.digitalConsent;
  const firstInvalid=Object.keys(fields).find(key=>errors[key]);

@@ -13,7 +13,7 @@ function date(v){return v?new Date(v).toLocaleDateString('nl-NL'):'—';}
 function lock(value){busy=value;document.querySelectorAll('.pm button').forEach(b=>b.disabled=value);}
 async function act(path,data){
  if(busy)return;lock(true);
- try{await api(path,data);await refresh();$('status').textContent='Actie verwerkt. Overzicht vernieuwd.';}catch(e){$('status').textContent=e.message;}finally{lock(false);}
+ try{const result=await api(path,data);await refresh();$('status').textContent=path==='payout-check'?'Betaalcontrole geslaagd. Controleer het bedrag en de bankgegevens vóór handmatige overschrijving.':path==='review-commission'?'Commissie: '+(labels[result.status]||result.status):'Actie verwerkt. Overzicht vernieuwd.';}catch(e){$('status').textContent=e.message;}finally{lock(false);}
 }
 async function refresh(){
  try{
@@ -27,7 +27,7 @@ async function refresh(){
    if(p.status!=='closed'&&p.status!=='active')button(actions,'Activeren',()=>{
     if(!p.agreement_accepted_at&&!confirm('Bevestig alleen als de partner de schriftelijke pilotvoorwaarden daadwerkelijk heeft geaccepteerd.'))return;
     act('partner-status',{partnerId:p.id,status:'active',agreementConfirmed:true});});
-   if(p.status==='active'){button(actions,'Blokkeren',()=>{if(confirm('Partner en alle codes blokkeren?'))act('partner-status',{partnerId:p.id,status:'suspended'});});const option=document.createElement('option');option.value=p.id;option.textContent=p.display_name;select.append(option);}
+   if(p.status==='active'){button(actions,'Ambassadeur (€3)',()=>{if(confirm('Bevestig de upgrade voor toekomstige bestellingen; minimaal 20 goedgekeurde verkopen vereist.'))act('ambassador',{partnerId:p.id,confirmed:true});});button(actions,'Blokkeren',()=>{if(confirm('Partner en alle codes blokkeren?'))act('partner-status',{partnerId:p.id,status:'suspended'});});const option=document.createElement('option');option.value=p.id;option.textContent=p.display_name;select.append(option);}
    if(p.status!=='closed')button(actions,'Sluiten',()=>{if(confirm('Partner definitief sluiten? Bestaande commissies blijven geregistreerd.'))act('partner-status',{partnerId:p.id,status:'closed'});});
   }
   for(const c of d.codes){const row=$('codes').insertRow();td(row,c.code);td(row,names.get(c.partner_id)||'Partner');td(row,money(c.commission_cents));td(row,c.active?'Ja':'Nee');const actions=td(row,'');

@@ -45,6 +45,7 @@ function clearCode(){
  creatorNotice.textContent='';displayPrice();lockCode();
 }
 creatorApply.addEventListener('click',applyCode);creatorRemove.addEventListener('click',clearCode);
+creatorInput.addEventListener('input',()=>{if(!identity&&!busy&&!quoteBusy&&creatorCode&&creatorInput.value.trim().toUpperCase()!==creatorCode){creatorCode=null;config.amountCents=config.baseAmountCents??priceAt();creatorNotice.textContent='Pas de nieuwe code toe om korting te krijgen.';displayPrice();}});
 creatorInput.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();applyCode();}});
 for(const id of ['review-button','edit-button','new-attempt']) document.getElementById(id).disabled=false;
 let config={enabled:false,amountCents:priceAt()}, busy=false, identity=null, submittedPayload=null, dirty=false, navigating=false;
